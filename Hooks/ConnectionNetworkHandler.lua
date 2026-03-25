@@ -1,3 +1,3 @@
-NepHook:Post(ConnectionNetworkHandler, "sync_outfit", function(self)
-    LuaNetworking:SendToPeers("nephud_teammate_bg", tostring(NepgearsyHUDReborn:GetTeammateSkinID()))
+NepHook:Post(ConnectionNetworkHandler, "sync_outfit", function()
+    LuaNetworking:SendToPeers("nephud_teammate_bg", tostring(NepgearsyHUDReborn:GetOption("TeammateSkin")))
 end)

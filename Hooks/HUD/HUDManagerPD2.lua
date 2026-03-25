@@ -1,11 +1,15 @@
 dofile(ModPath .. "Hooks/HUD/HUDTeammateWide.lua")
 
 function HUDManager:set_stamina_value(value)
-	self._hud_stamina:set_stamina_value(value)
+	if self._hud_stamina then
+		self._hud_stamina:set_stamina_value(value)
+	end
 end
 
 function HUDManager:set_max_stamina(value)
-	self._hud_stamina:set_max_stamina(value)
+	if self._hud_stamina then
+		self._hud_stamina:set_max_stamina(value)
+	end
 end
 
 function HUDManager:_create_teammates_panel(hud)
@@ -26,7 +30,7 @@ function HUDManager:_create_teammates_panel(hud)
 			h = h,
 			y = hud.panel:h() - h
 		})
-		
+
 		local teammate_w = 309
 		local player_gap = 0
 		local small_gap = ((teammates_panel:w() - player_gap) - teammate_w * 4) / 3
@@ -67,7 +71,7 @@ function HUDManager:_create_teammates_panel(hud)
 			h = h,
 			y = wide_hud.panel:h() - h
 		})
-		
+
 		local teammate_w = 336
 
 		local player_gap = 0
@@ -93,6 +97,15 @@ function HUDManager:_create_teammates_panel(hud)
 		end
 	end
 end
+
+function HUDManager:change_health(...)
+	self._teammate_panels[self.PLAYER_PANEL]:change_health(...)
+end
+
+NepHook:Post(HUDManager, "feed_heist_time", function(self)
+	self._teammate_panels[self.PLAYER_PANEL]:change_health(0)
+end)
+
 --[[
 NepHook:Post(HUDManager, "align_teammate_name_label", function(self, panel, interact)
 	local nameLabel = panel:child("text")
@@ -110,9 +123,9 @@ NepHook:Post(HUDManager, "align_teammate_name_label", function(self, panel, inte
 	end
 end)
 ]]
+
 NepHook:Post(HUDManager, "add_teammate_panel", function(self, character_name, player_name, ai, peer_id)
 	local panel_id = nil
-
 	for i, panel in ipairs(self._teammate_panels) do
 		if panel._peer_id == peer_id then
 			panel_id = i
@@ -122,7 +135,6 @@ NepHook:Post(HUDManager, "add_teammate_panel", function(self, character_name, pl
 
 	local bg_texture_id = managers.player._player_teammate_bgs[peer_id]
 	local bg_texture_path = NepgearsyHUDReborn:GetTeammateSkinById(bg_texture_id)
-
 	if bg_texture_id then
 		if self._teammate_panels[panel_id] then
 			self._teammate_panels[panel_id]:_update_player_bg(bg_texture_path)
@@ -153,8 +165,7 @@ function HUDManager:hide_panels_real_slow(...)
 	end
 end
 
---[[ Credits to Luffy for his code below ]]
-
+-- Credits to Luffy for his code below
 NepHook:Pre(HUDManager, "_setup_player_info_hud_pd2", function(self)
 	if NepgearsyHUDReborn:IsTeammatePanelWide() then
 		managers.gui_data:layout_scaled_fullscreen_workspace(managers.hud._saferect, 0.95, 1)
@@ -170,7 +181,6 @@ NepHook:Post(HUDManager, "_setup_player_info_hud_pd2", function(self)
 	end
 
 	local hud = managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2)
-
 	self:_create_stamina_hud(hud)
 	self:_create_money_hud(hud)
 end)
@@ -196,18 +206,26 @@ function HUDManager:recreate_player_info_hud_pd2()
 end
 
 function HUDManager:_create_stamina_hud(hud)
+	if not NepgearsyHUDReborn:GetOption("ActivateStaminaBar") then
+		return
+	end
+
 	hud = hud or managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2)
 	self._hud_stamina = HUDStamina:new(hud)
 end
 
 function HUDManager:_create_money_hud(hud)
+	if not NepgearsyHUDReborn:GetOption("ActivateMoneyHUD") then
+		return
+	end
+
 	hud = hud or managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2)
 	self._hud_money = HUDMoney:new(hud)
 end
 
 core:module("CoreGuiDataManager")
 function GuiDataManager:layout_scaled_fullscreen_workspace(ws, scale, on_screen_scale)
-	local base_res = {x = 1280, y = 720}
+	local base_res = { x = 1280, y = 720 }
 	local res = RenderSettings.resolution
 	local sc = (2 - scale)
 	local aspect_width = base_res.x / self:_aspect_ratio()
