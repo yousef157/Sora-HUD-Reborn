@@ -1371,10 +1371,10 @@ function NepHudMenu:MainClbk(item)
 
         if item.name == "ForcedLocalization" then
             if NepgearsyHUDReborn:IsLanguageFontLimited(item:Value()) then
-                if self._background_enabled then
+                local enabled = self._background_enabled
+                if enabled then
                     self:background_switch()
                 end
-
                 QuickMenu:new(
                     managers.localization:text("dialog_warning_title"),
                     "This localization may not support fonts beyond font_large_mf.",
@@ -1383,7 +1383,7 @@ function NepHudMenu:MainClbk(item)
                             text = managers.localization:text("dialog_ok"),
                             is_cancel_button = true,
                             callback = function()
-                                if not self._background_enabled then
+                                if enabled and not self._background_enabled then
                                     self:background_switch()
                                 end
                             end
@@ -1395,7 +1395,8 @@ function NepHudMenu:MainClbk(item)
         end
 
         if item.name == "UseDiscordRichPresence" then
-            if self._background_enabled then
+            local enabled = self._background_enabled
+            if enabled then
                 self:background_switch()
             end
             QuickMenu:new(
@@ -1410,7 +1411,7 @@ function NepHudMenu:MainClbk(item)
                         text = managers.localization:text("dialog_no"),
                         is_cancel_button = true,
                         callback = function()
-                            if not self._background_enabled then
+                            if enabled and not self._background_enabled then
                                 self:background_switch()
                             end
                         end
