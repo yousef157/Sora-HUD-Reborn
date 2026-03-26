@@ -10,18 +10,18 @@ function NepgearsyHUDReborn:Init()
 end
 
 NepgearsyHUDReborn.localization = {
-    { text = "NepgearsyHUDReborn/Localization/English", path = "english.txt" },
-    { text = "NepgearsyHUDReborn/Localization/Turkish", path = "turkish.txt", requires_default_font = true },
-    { text = "NepgearsyHUDReborn/Localization/Portuguese", path = "portuguese.txt" },
-    { text = "NepgearsyHUDReborn/Localization/Spanish", path = "spanish.txt" },
-    { text = "NepgearsyHUDReborn/Localization/Russian", path = "russian.txt", requires_default_font = true },
-    { text = "NepgearsyHUDReborn/Localization/French", path = "french.txt" },
-    { text = "NepgearsyHUDReborn/Localization/Romanian", path = "romanian.txt" },
-    { text = "NepgearsyHUDReborn/Localization/German", path = "german.txt" },
-    { text = "NepgearsyHUDReborn/Localization/Thai", path = "thai.txt", requires_default_font = true },
-    { text = "NepgearsyHUDReborn/Localization/SimplifiedChinese", path = "chinese.txt", requires_default_font = true },
-    { text = "NepgearsyHUDReborn/Localization/Polish", path = "polish.txt" },
-    { text = "NepgearsyHUDReborn/Localization/Korean", path = "korean.txt", requires_default_font = true }
+    { text = "NepgearsyHUDReborn/Localization/English", path = "english.json" },
+    { text = "NepgearsyHUDReborn/Localization/Turkish", path = "turkish.json", requires_default_font = true },
+    { text = "NepgearsyHUDReborn/Localization/Portuguese", path = "portuguese.json" },
+    { text = "NepgearsyHUDReborn/Localization/Spanish", path = "spanish.json" },
+    { text = "NepgearsyHUDReborn/Localization/Russian", path = "russian.json", requires_default_font = true },
+    { text = "NepgearsyHUDReborn/Localization/French", path = "french.json" },
+    { text = "NepgearsyHUDReborn/Localization/Romanian", path = "romanian.json" },
+    { text = "NepgearsyHUDReborn/Localization/German", path = "german.json" },
+    { text = "NepgearsyHUDReborn/Localization/Thai", path = "thai.json", requires_default_font = true },
+    { text = "NepgearsyHUDReborn/Localization/SimplifiedChinese", path = "chinese.json", requires_default_font = true },
+    { text = "NepgearsyHUDReborn/Localization/Polish", path = "polish.json" },
+    { text = "NepgearsyHUDReborn/Localization/Korean", path = "korean.json", requires_default_font = true }
 }
 
 NepgearsyHUDReborn.creators = {
@@ -107,7 +107,7 @@ NepgearsyHUDReborn.TeammateSkinsCollectionLegacy = {
 
 NepgearsyHUDReborn.TeammateSkinsCollection = {
 	default = "NepgearsyHUDRebornMenu/Buttons/TeammateSkin/DefaultHeader",
-	pd2 = "NepgearsyHUDRebornMenu/Buttons/TeammateSkin/Pd2Header",
+	pd2 = "NepgearsyHUDRebornMenu/Buttons/TeammateSkin/PD2Header",
 	community = "NepgearsyHUDRebornMenu/Buttons/TeammateSkin/CommunityHeader",
 	hdn = "NepgearsyHUDRebornMenu/Buttons/TeammateSkin/HDNHeader",
 	suguri = "NepgearsyHUDRebornMenu/Buttons/TeammateSkin/SuguriHeader",

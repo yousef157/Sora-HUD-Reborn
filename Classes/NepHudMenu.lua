@@ -65,7 +65,7 @@ function NepHudMenu:InitTopBar()
         w = 26,
         h = 26,
         offset_x = 20,
-        help = "Toggle background and optional menu parts.",
+        help = managers.localization:text("NepgearsyHUDRebornMenu/Help/DisableBackground"),
         on_callback = ClassClbk(self, "background_switch")
     })
 
@@ -75,7 +75,7 @@ function NepHudMenu:InitTopBar()
         w = 26,
         h = 26,
         offset_x = 5,
-        help = "Go to the mod's page.",
+        help = managers.localization:text("NepgearsyHUDRebornMenu/Help/MWSProfile"),
         on_callback = ClassClbk(self, "open_url", "https://modworkshop.net/mod/22152")
     })
 
@@ -214,7 +214,7 @@ function NepHudMenu:InitMainMenu()
             name = "HUDOptionsButton",
             border_color = self.BorderColor,
             border_left = true,
-            text = "NepgearsyHUDRebornMenu/Buttons/HUDOptionsButton",
+            text = "NepgearsyHUDRebornMenu/Buttons/HUDOptions",
             localized = true,
             on_callback = ClassClbk(self, "InitHUDOptions")
         }),
@@ -232,7 +232,7 @@ function NepHudMenu:InitMainMenu()
             name = "ColorOptionsButton",
             border_color = self.BorderColor,
             border_left = true,
-            text = "NepgearsyHUDRebornMenu/Buttons/ColorOptionsButton",
+            text = "NepgearsyHUDRebornMenu/Buttons/ColorOptions",
             localized = true,
             on_callback = ClassClbk(self, "InitColorOptions")
         }),
@@ -262,7 +262,7 @@ function NepHudMenu:InitHUDOptions()
 
     self.HUDOptionsCat = self.MainMenu:Divider({
         name = "HUDOptionsCat",
-        text = "NepgearsyHUDRebornMenu/Buttons/HUDOptionsCat",
+        text = "NepgearsyHUDRebornMenu/Buttons/HUDOptions",
         offset_y = 20,
         background_color = Color(0, 0, 0),
         highlight_color = Color.black,
@@ -325,7 +325,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("MinimapForce"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/MinimapForce",
-            help = "Force the minimap anytime, even if the current map doesn't have a texture for it.",
+            help = "NepgearsyHUDRebornMenu/Buttons/HUD/MinimapForceHelp",
             on_callback = ClassClbk(self, "MainClbk")
         }),
 
@@ -366,7 +366,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("EnableTrackers"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/Trackers",
-            help = "Enables the trade delay and kill tracker.",
+            help = "NepgearsyHUDRebornMenu/Buttons/HUD/TrackersHelp",
             on_callback = ClassClbk(self, "MainClbk")
         }),
 
@@ -383,7 +383,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("AssaultTrackersScale"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/AssaultTrackersScale",
-            help = "Affects the kill, cops alive and wave tracker.",
+            help = "NepgearsyHUDRebornMenu/Buttons/HUD/AssaultTrackersScaleHelp",
             min = 0.1,
             max = 2,
             step = 0.01,
@@ -547,7 +547,7 @@ function NepHudMenu:InitHUDOptions()
             offset_y = 20,
             value = NepgearsyHUDReborn:GetOption("Scale"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/Scale",
-            help = "If in-game, restart the map to take effect.",
+            help = "NepgearsyHUDRebornMenu/Buttons/HUD/ScaleHelp",
             min = 0.1,
             max = 1.5,
             step = 0.01,
@@ -559,7 +559,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("Spacing"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/Spacing",
-            help = "If in-game, restart the map to take effect.",
+            help = "NepgearsyHUDRebornMenu/Buttons/HUD/ScaleHelp",
             min = 0.1,
             max = 1,
             step = 0.01,
@@ -618,7 +618,7 @@ function NepHudMenu:InitMenuOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("HorizontalPerkDeck"),
             text = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/HorizontalPerkDeck",
-            help = "To be used with Horizontal Loadout.",
+            help = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/HorizontalPerkDeckHelp",
             on_callback = ClassClbk(self, "MainClbk"),
             --enabled = NepgearsyHUDReborn:GetOption("EnableHorizontalLoadout")
         }),
@@ -663,7 +663,7 @@ function NepHudMenu:InitMenuOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("ShowMapTexture"),
             text = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/ShowMapTexture",
-            help = "To be used with heist preview.",
+            help = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/ShowMapTextureHelp",
             on_callback = ClassClbk(self, "MainClbk"),
             --enabled = NepgearsyHUDReborn:GetOption("ShowMapStarring")
         })
@@ -677,7 +677,7 @@ function NepHudMenu:InitColorOptions()
 
     self.ColorsCat = self.MainMenu:Divider({
         name = "ColorsCat",
-        text = "NepgearsyHUDRebornMenu/Buttons/ColorsCat",
+        text = "NepgearsyHUDRebornMenu/Buttons/ColorOptions",
         background_color = Color(0, 0, 0),
         highlight_color = Color.black,
         text_align = "center",
@@ -714,7 +714,7 @@ function NepHudMenu:InitColorOptions()
             items = NepgearsyHUDReborn.colors,
             value = NepgearsyHUDReborn:GetOption("HealthColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/HealthColor",
-            help = "Thin health style only.",
+            help = "NepgearsyHUDRebornMenu/Buttons/Colors/HealthColorHelp",
             on_callback = ClassClbk(self, "MainClbk")
         }),
 
