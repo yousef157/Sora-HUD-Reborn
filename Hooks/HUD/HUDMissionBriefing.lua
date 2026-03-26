@@ -114,7 +114,7 @@ NepHook:Add("NetworkReceivedData", function(sender, id, data)
             local player_slot = starring_panel:child("player_" .. sender)
 
             if id == "StarringColor" then
-                player_slot:set_color(NepgearsyHUDReborn:StringToColor("starring", tonumber(data)))
+                player_slot:set_color(NepgearsyHUDReborn:StringToColor(tonumber(data)))
             end
 
             if id == "StarringText" then
