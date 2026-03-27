@@ -20,6 +20,7 @@ NepgearsyHUDReborn.localization = {
     { text = "NepgearsyHUDReborn/Localization/German", path = "german.json" },
     { text = "NepgearsyHUDReborn/Localization/Thai", path = "thai.json", requires_default_font = true },
     { text = "NepgearsyHUDReborn/Localization/SimplifiedChinese", path = "chinese.json", requires_default_font = true },
+	--{ text = "NepgearsyHUDReborn/Localization/Italian", path = "italian.json", },
     { text = "NepgearsyHUDReborn/Localization/Polish", path = "polish.json" },
     { text = "NepgearsyHUDReborn/Localization/Korean", path = "korean.json", requires_default_font = true }
 }
@@ -31,7 +32,7 @@ NepgearsyHUDReborn.creators = {
 	{ name = "=PDTC= Splat", steam_id = "76561198085683005", desc = "Helped with testing stuff." },
 	{ name = "Babyforce", steam_id = "76561198053887800", desc = "Giving me his thoughts and helping." },
 	{ name = "sydch pasha", steam_id = "76561198063913184", desc = "Made the Turkish localization" },
-	{ name = "AldoRaine, gabsF", steam_id = nil, desc = "Made the Portuguese localization" },
+	{ name = "AldoRaine, gabsF", desc = "Made the Portuguese localization" },
 	{ name = "ElReyZero", steam_id = "76561198143859174", desc = "Made the Spanish localization" },
 	{ name = "Blake Langermann", steam_id = "76561198015483064", desc = "Made the Russian localization" },
 	{ name = "=PDTC= Dobby Senpai", steam_id = "76561198040053543", desc = "Helped with finding a sock." },

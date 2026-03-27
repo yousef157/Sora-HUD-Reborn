@@ -50,11 +50,12 @@ function NepHudMenu:InitTopBar()
     })
 
     self.HUDName = self.TopBar:Divider({
-        text = managers.localization:text("NepgearsyHUDReborn"),
+        text = "NepgearsyHUDReborn",
         font = NepgearsyHUDReborn:SetFont(font),
         size = 25,
         border_left = false,
         size_by_text = true,
+        localized = true,
         color = Color(0.8, 0.8, 0.8),
         layer = BaseLayer,
     })
@@ -65,7 +66,8 @@ function NepHudMenu:InitTopBar()
         w = 26,
         h = 26,
         offset_x = 20,
-        help = managers.localization:text("NepgearsyHUDRebornMenu/Help/DisableBackground"),
+        help = "NepgearsyHUDRebornMenu/Help/DisableBackground",
+        localized = true,
         on_callback = ClassClbk(self, "background_switch")
     })
 
@@ -75,7 +77,8 @@ function NepHudMenu:InitTopBar()
         w = 26,
         h = 26,
         offset_x = 5,
-        help = managers.localization:text("NepgearsyHUDRebornMenu/Help/MWSProfile"),
+        help = "NepgearsyHUDRebornMenu/Help/MWSProfile",
+        localized = true,
         on_callback = ClassClbk(self, "open_url", "https://modworkshop.net/mod/22152")
     })
 
@@ -88,7 +91,6 @@ function NepHudMenu:InitTopBar()
         foreground_highlight = self.BorderColor,
         position = "RightOffset-x",
         offset_x = 5,
-        localized = false,
         size_by_text = true,
         text_align = "right",
         text_vertical = "center",
@@ -108,7 +110,6 @@ function NepHudMenu:InitTopBar()
             item:Panel():set_right(self.HUDVersion:Panel():left() - 120)
             item:Panel():set_world_center_y(self.TopBar:Panel():world_center_y())
         end,
-        localized = false,
         size_by_text = true,
         text_align = "right",
         text_vertical = "center",
@@ -1429,14 +1430,13 @@ end
 
 function NepHudMenu:SkinSetClbk(skin_id)
     if skin_id then
-        NepgearsyHUDReborn:DebugLog("Teammate skin id set to: ", skin_id)
         NepgearsyHUDReborn:SetOption("TeammateSkin", skin_id)
         self.EquippedSkin:SetImage(NepgearsyHUDReborn:GetTeammateSkinById(skin_id))
     end
 end
 
 function NepHudMenu:SetHudScaleSpacing(item)
-    NepgearsyHUDReborn.Options:SetValue(item:Name(), item:Value())
+    NepgearsyHUDReborn:SetOption(item:Name(), item:Value())
     if managers.hud and managers.hud.recreate_player_info_hud_pd2 then
         if NepgearsyHUDReborn:IsTeammatePanelWide() then
             managers.gui_data:layout_scaled_fullscreen_workspace(managers.hud._saferect, 0.95, 1)
@@ -1444,8 +1444,7 @@ function NepHudMenu:SetHudScaleSpacing(item)
             return
         end
 
-        managers.gui_data:layout_scaled_fullscreen_workspace(managers.hud._saferect,
-            NepgearsyHUDReborn.Options:GetValue("Scale"), NepgearsyHUDReborn.Options:GetValue("Spacing"))
+        managers.gui_data:layout_scaled_fullscreen_workspace(managers.hud._saferect, NepgearsyHUDReborn:GetOption("Scale"), NepgearsyHUDReborn:GetOption("Spacing"))
         managers.hud:recreate_player_info_hud_pd2()
     end
 end

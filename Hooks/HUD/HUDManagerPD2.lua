@@ -172,7 +172,7 @@ NepHook:Pre(HUDManager, "_setup_player_info_hud_pd2", function(self)
 		return
 	end
 
-	managers.gui_data:layout_scaled_fullscreen_workspace(managers.hud._saferect, NepgearsyHUDReborn.Options:GetValue("Scale"), NepgearsyHUDReborn.Options:GetValue("Spacing"))
+	managers.gui_data:layout_scaled_fullscreen_workspace(managers.hud._saferect, NepgearsyHUDReborn:GetOption("Scale"), NepgearsyHUDReborn:GetOption("Spacing"))
 end)
 
 NepHook:Post(HUDManager, "_setup_player_info_hud_pd2", function(self)

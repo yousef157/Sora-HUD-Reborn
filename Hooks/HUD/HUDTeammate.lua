@@ -5,11 +5,6 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 		self._is_ai = false
 		local name = self._panel:child("name")
 
-		local down_counter = "NepgearsyHUDReborn/HUD/DownCounterIconHeartOnly"
-		if NepgearsyHUDReborn:GetOption("DownCounterType") == 2 then
-			down_counter = "NepgearsyHUDReborn/HUD/DownCounterIcon"
-		end
-
 		local player_font = "fonts/font_large_mf"
 		if NepgearsyHUDReborn:GetOption("PlayerNameFont") == 2 then
 			player_font = "fonts/font_eurostile_ext"
@@ -472,7 +467,7 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 
 		self:_create_condition(radial_health_panel)
 
-		if NepgearsyHUDReborn.Options:GetValue("HealthStyle") == 1 then
+		if NepgearsyHUDReborn:GetOption("HealthStyle") == 1 then
 			local function set_texture(o, texture) --set using the texture's actual size not a hardcoded size like 64/128.
 				local w, h = o:texture_width(), o:texture_height()
 				o:set_image(texture, w, 0, -w, h)

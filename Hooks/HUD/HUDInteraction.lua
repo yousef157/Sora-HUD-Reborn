@@ -110,7 +110,7 @@ if NepgearsyHUDReborn:GetOption("EnableInteraction") then
         self._interact_bar_background:set_position(self._hud_panel:w() / 2 - (333 / 2), self._hud_panel:h() / 2 + 120)
     end)
 
-    function HUDInteraction:set_interaction_bar_width(current, total)
+    NepHook:Post(HUDInteraction, "set_interaction_bar_width", function(self, current, total)
         if self._interact_bar_progress then
             local calc = math.clamp(current / total, 0, 500) * 333
 
@@ -124,16 +124,16 @@ if NepgearsyHUDReborn:GetOption("EnableInteraction") then
 
             self._interact_bar_progress:set_w(calc)
         end
-    end
+    end)
 
-    function HUDInteraction:hide_interaction_bar(complete)
+    NepHook:Post(HUDInteraction, "hide_interaction_bar", function(self)
         self._interact_bar_contour:animate(callback(self, self, "_animate_fade_out"))
         self._interact_bar_progress:animate(callback(self, self, "_animate_fade_out"))
         self._interact_bar_background:animate(callback(self, self, "_animate_fade_out"))
         self._hud_panel:child(self._child_name_text):animate(callback(self, self, "_animate_fade_out"))
 
         self:reset_interaction_bar()
-    end
+    end)
 
     function HUDInteraction:reset_interaction_bar()
         self._hud_panel:remove(self._hud_panel:child("interact_bar_contour"))
@@ -194,6 +194,11 @@ if NepgearsyHUDReborn:GetOption("EnableInteraction") then
             self._interact_bar_progress = nil
             self._interact_bar_background = nil
         end
+    end
+
+    function HUDInteraction:_animate_interaction_complete(bitmap, circle)
+        bitmap:parent():remove(bitmap)
+        circle:remove()
     end
 
     function HUDInteraction:_animate_fade_out(o)
