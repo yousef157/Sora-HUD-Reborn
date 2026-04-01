@@ -1121,23 +1121,26 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 	end
 
 	if NepgearsyHUDReborn:GetOption("EnableSteamAvatars") then
-		function HUDTeammate:SetupAccountAvatar()
+		function HUDTeammate:SetupAccountAvatar(refresh)
 			local peer = managers.network:session():peer(self._peer_id)
-			local steam_id = self._main_player and Steam:userid() or peer and peer:account_id()
+			local steam_id = self._main_player and Steam:userid() or (peer and peer:account_id())
 			local quality = self._main_player and Steam.LARGE_AVATAR or 1
+			refresh = refresh or false
 			self.Avatar:set_visible(true)
 			NepgearsyHUDReborn:SteamAvatar(steam_id, function(texture)
 				if texture then
 					self.Avatar:set_image(texture)
 					self.BGAvatar:set_visible(true)
 				end
-			end, { quality = quality })
+			end, { quality = quality, refresh = refresh })
 		end
 
 		NepHook:Post(HUDTeammate, "set_peer_id", function(self)
-			local peer = managers.network:session():peer(self._peer_id)
-			if peer then
-				self:SetupAccountAvatar()
+			if not self._main_player then
+				local peer = managers.network:session():peer(self._peer_id)
+				if peer then
+					self:SetupAccountAvatar(true)
+				end
 			end
 		end)
 	end

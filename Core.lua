@@ -32,7 +32,7 @@ NepgearsyHUDReborn.creators = {
 	{ name = "=PDTC= Splat", steam_id = "76561198085683005", desc = "Helped with testing stuff." },
 	{ name = "Babyforce", steam_id = "76561198053887800", desc = "Giving me his thoughts and helping." },
 	{ name = "sydch pasha", steam_id = "76561198063913184", desc = "Made the Turkish localization" },
-	{ name = "AldoRaine, gabsF", desc = "Made the Portuguese localization" },
+	{ name = "AldoRaine, gabsF", steam_id = nil, desc = "Made the Portuguese localization" },
 	{ name = "ElReyZero", steam_id = "76561198143859174", desc = "Made the Spanish localization" },
 	{ name = "Blake Langermann", steam_id = "76561198015483064", desc = "Made the Russian localization" },
 	{ name = "=PDTC= Dobby Senpai", steam_id = "76561198040053543", desc = "Helped with finding a sock." },
@@ -349,26 +349,28 @@ end
 function NepgearsyHUDReborn:SteamAvatar(steam_id, set, params)
 	params = params or {}
 	local quality = params.quality or 1
+	local refresh = params.refresh or false
 	local retrieving_tries = params.retrieving_tries or 0
 	local max_tries = 3
+	if refresh then max_tries = 1 end
 
 	Steam:friend_avatar(quality, steam_id, function(texture)
 		if texture then
 			set(texture)
-		else
-			if retrieving_tries < max_tries then
-				DelayedCalls:Add("NepAvatar_" .. steam_id .. "_" .. retrieving_tries, 1, function()
-					NepgearsyHUDReborn:DebugLog("SteamAvatar: Refetching " .. retrieving_tries + 1 .. "/" .. max_tries .. " " .. steam_id)
-					self:SteamAvatar(steam_id, set, {
-						retrieving_tries = retrieving_tries + 1,
-						max_tries = max_tries,
-						quality = quality
-					})
-				end)
-			else
-				NepgearsyHUDReborn:Log("SteamAvatar: Max tries reached, pass: " .. steam_id)
-				set(texture)
-			end
+		end
+
+		if (refresh or not texture) and retrieving_tries < max_tries then
+			DelayedCalls:Add("NepAvatar_" .. steam_id .. "_" .. retrieving_tries, 1.5, function()
+				self:DebugLog("SteamAvatar: Refetching " .. retrieving_tries + 1 .. "/" .. max_tries .. " " .. steam_id)
+				self:SteamAvatar(steam_id, set, {
+					retrieving_tries = retrieving_tries + 1,
+					max_tries = max_tries,
+					quality = quality,
+					refresh = refresh
+				})
+			end)
+		elseif not texture then
+			self:Log("SteamAvatar: Max tries reached, pass: " .. steam_id)
 		end
 	end)
 end

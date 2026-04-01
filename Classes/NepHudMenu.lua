@@ -1203,7 +1203,7 @@ function NepHudMenu:InitCollab()
                 if texture then
                     CollabAvatar:set_image(texture)
                 end
-            end)
+            end, {refresh = true})
         end
 
         local CollabName = CollabPanel:text({
