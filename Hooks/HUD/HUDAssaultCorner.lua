@@ -278,20 +278,20 @@ function HUDAssaultCorner:init(hud, full_hud, tweak_hud)
         self._wave_bg_box:set_visible(false)
     end
 
-    self.WaveTracker = trackerPanel:panel({
+    local waveTracker = trackerPanel:panel({
         w = 90 * self._trackers_scale,
         h = 24 * self._trackers_scale,
         visible = managers.skirmish:is_skirmish() or self:is_safehouse_raid()
     })
 
     if NepgearsyHUDReborn:GetOption("EnableCopTracker") then
-        self.WaveTracker:set_right(copTracker:left() - 5)
+        waveTracker:set_right(copTracker:left() - 5)
     else
-        self.WaveTracker:set_right(killTracker:left() - 5)
+        waveTracker:set_right(killTracker:left() - 5)
     end
-    self.WaveTracker:set_top(killTracker:top())
+    waveTracker:set_top(killTracker:top())
 
-    local waveBG = self.WaveTracker:rect({
+    local waveBG = waveTracker:rect({
         name = "background",
         color = Color.white,
         alpha = 0.6,
@@ -300,7 +300,7 @@ function HUDAssaultCorner:init(hud, full_hud, tweak_hud)
         valign = "scale"
     })
 
-    local waveIcon = self.WaveTracker:bitmap({
+    local waveIcon = waveTracker:bitmap({
         texture = "guis/textures/pd2/specialization/icons_atlas",
         name = "wave_icon",
         layer = 1,
@@ -318,9 +318,9 @@ function HUDAssaultCorner:init(hud, full_hud, tweak_hud)
         h = 20 * self._trackers_scale,
         color = Color.black
     })
-    waveIcon:set_center_y(self.WaveTracker:center_y())
+    waveIcon:set_center_y(waveTracker:center_y())
 
-    self.waveTrackerAmount = self.WaveTracker:text({
+    self.waveTrackerAmount = waveTracker:text({
         font = "fonts/font_large_mf",
         font_size = 20 * self._trackers_scale,
         vertical = "center",
@@ -328,6 +328,8 @@ function HUDAssaultCorner:init(hud, full_hud, tweak_hud)
         text = self:get_completed_waves_string(),
         color = Color.black
     })
+    self.waveTrackerAmount:set_right(waveTracker:w() - 9 * self._trackers_scale)
+    self.waveTrackerAmount:set_center_y(waveTracker:h() / 2 + 1.1 * self._trackers_scale)
 
     if managers.groupai:state():whisper_mode() then
         self._current_assault_color = NepgearsyHUDReborn:GetOption("SoraStealthBarColor")
