@@ -13,7 +13,6 @@ if NepgearsyHUDReborn:GetOption("EnableStarring") or NepgearsyHUDReborn:GetOptio
 		local job_data = managers.job:current_job_data() or {}
 		local level_tweak = tweak_data.levels[Global.level_data.level_id] or {}
 		local name_id = stage_data and stage_data.name_id or level_data and level_data.name_id or nil
-		local bg_texture = level_data and level_data.load_screen or level_tweak and level_tweak.load_screen or level_tweak and level_tweak.load_data and level_tweak.load_data.image or job_data.load_screen
 
 		local bs_panel = self._blackscreen_panel -- bullshit panel XD
 		local starring_panel = bs_panel:panel({
@@ -24,14 +23,17 @@ if NepgearsyHUDReborn:GetOption("EnableStarring") or NepgearsyHUDReborn:GetOptio
 		})
 
 		if NepgearsyHUDReborn:GetOption("ShowMapStarring") then
-			if bg_texture and NepgearsyHUDReborn:GetOption("ShowMapTexture") then
-				self._blackscreen_panel:bitmap({
-					texture = bg_texture,
-					w = self._blackscreen_panel:w(),
-					h = self._blackscreen_panel:h(),
-					alpha = 0.25,
-					layer = -1
-				})
+			if NepgearsyHUDReborn:GetOption("ShowMapTexture") then
+				local bg_texture = level_data and level_data.load_screen or level_tweak and level_tweak.load_screen or level_tweak and level_tweak.load_data and level_tweak.load_data.image or job_data and job_data.load_screen
+				if bg_texture then
+					self._blackscreen_panel:bitmap({
+						texture = bg_texture,
+						w = self._blackscreen_panel:w(),
+						h = self._blackscreen_panel:h(),
+						alpha = 0.25,
+						layer = -1
+					})
+				end
 			end
 
 			if name_id then
@@ -104,10 +106,7 @@ if NepgearsyHUDReborn:GetOption("EnableStarring") or NepgearsyHUDReborn:GetOptio
 				font_size = 30,
 				vertical = "left",
 				align = "left",
-				valign = {
-					0.4,
-					0
-				},
+				valign = { 0.4, 0 },
 				color = Color(1, 0.7, 0)
 			})
 

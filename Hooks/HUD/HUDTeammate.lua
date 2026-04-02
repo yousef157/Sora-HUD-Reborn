@@ -662,6 +662,7 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 		if alive(weapons_panel) then
 			local firemode_single = weapons_panel:child("firemode_single")
 			local firemode_auto = weapons_panel:child("firemode_auto")
+			local firemode_burst = weapons_panel:child("firemode_burst")
 			local firemode_mapping = is_secondary and self._firemode_secondary_mapping or self._firemode_primary_mapping
 
 			if firemode_mapping then
@@ -678,9 +679,10 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 				end
 			end
 
-			if alive(firemode_single) and alive(firemode_auto) then
-				firemode_single:set_visible(firemode == "single")
-				firemode_auto:set_visible(firemode ~= "single")
+			firemode_single:set_visible(firemode == "single")
+			firemode_auto:set_visible(firemode == "auto")
+			if alive(firemode_burst) then
+				firemode_burst:set_visible(firemode == "burst")
 			end
 		end
 	end
@@ -699,38 +701,47 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 		end
 
 		if self._main_player then
-			local equipped_primary = managers.blackmarket:equipped_primary()
-			local weapon_tweak_data = tweak_data.weapon[equipped_primary.weapon_id]
+			local equipped = managers.blackmarket:equipped_primary()
+			local weapon_tweak_data = tweak_data.weapon[equipped.weapon_id]
 			local fire_mode = weapon_tweak_data.FIRE_MODE
 			local can_toggle_firemode = weapon_tweak_data.CAN_TOGGLE_FIREMODE
 			local toggable_fire_modes = weapon_tweak_data.fire_mode_data and weapon_tweak_data.fire_mode_data.toggable
+			local firemode_single_key = "single"
+			local firemode_auto_key = "auto"
 
 			if toggable_fire_modes then
 				can_toggle_firemode = #toggable_fire_modes > 1
-				local firemode_single_key = toggable_fire_modes[1] or "single"
-				local firemode_auto_key = toggable_fire_modes[2] or "auto"
+				local firemode_single_key = toggable_fire_modes[1] or firemode_single_key
+				local firemode_auto_key = toggable_fire_modes[2] or firemode_auto_key
 				self._firemode_primary_mapping = {
 					[firemode_single_key] = "single",
 					[firemode_auto_key] = "auto"
 				}
 			end
 
-			local locked_to_auto = managers.weapon_factory:has_perk("fire_mode_auto", equipped_primary.factory_id, equipped_primary.blueprint)
-			local locked_to_single = managers.weapon_factory:has_perk("fire_mode_single", equipped_primary.factory_id, equipped_primary.blueprint)
-			locked_to_auto = managers.weapon_factory:has_perk("fire_mode_burst", equipped_primary.factory_id, equipped_primary.blueprint)
-			local single_id = "firemode_single" .. ((not can_toggle_firemode or locked_to_single) and "_locked" or "")
+			local locked_to_auto = managers.weapon_factory:has_perk("fire_mode_auto", equipped.factory_id, equipped.blueprint)
+			local locked_to_burst = managers.weapon_factory:has_perk("fire_mode_burst", equipped.factory_id, equipped.blueprint)
+			local locked_to_single = managers.weapon_factory:has_perk("fire_mode_single", equipped.factory_id, equipped.blueprint)
 
-			if toggable_fire_modes and can_toggle_firemode then
-				local firemode_single_key = toggable_fire_modes[1] or "single"
-				local firemode_auto_key = toggable_fire_modes[2] or "auto"
-				single_id = string.format("firemode_%s_%s", firemode_single_key, firemode_auto_key)
+			if locked_to_auto then
+				fire_mode = "auto"
+			elseif locked_to_burst then
+				fire_mode = "burst"
+			elseif locked_to_single then
+				fire_mode = "single"
 			end
 
-			if weapon_tweak_data.alt_fire_data then
-				single_id = string.format("firemode_%s_%s", fire_mode, "alt")
+			--[[
+			local is_locked = locked_to_auto or locked_to_burst or locked_to_single
+			local color = Color.white
+			if not can_toggle_firemode then
+				color = Color(1, 0.4, 0.4)
+			elseif is_locked then
+				color = Color(1, 1, 0.4)
 			end
+			]]
 
-			local firemode_single = primary_weapon_panel:text({
+			local firemode_primary = primary_weapon_panel:text({
 				name = "firemode_single",
 				text = "SINGLE",
 				font = "fonts/font_small_shadow_mf",
@@ -742,24 +753,12 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 				align = "right"
 			})
 
-			--firemode_single:set_center_x()
-			--firemode_single:set_top(primary_weapon_panel:h() - 2)
-			firemode_single:set_bottom(primary_weapon_panel:h())
-			firemode_single:hide()
+			--firemode_primary:set_center_x()
+			--firemode_primary:set_top(primary_weapon_panel:h() - 2)
+			firemode_primary:set_bottom(primary_weapon_panel:h())
+			firemode_primary:hide()
 
-			local auto_id = "firemode_auto" .. ((not can_toggle_firemode or locked_to_auto) and "_locked" or "")
-
-			if toggable_fire_modes and can_toggle_firemode then
-				local firemode_single_key = toggable_fire_modes[1] or "single"
-				local firemode_auto_key = toggable_fire_modes[2] or "auto"
-				auto_id = string.format("firemode_%s_%s", firemode_auto_key, firemode_single_key)
-			end
-
-			if weapon_tweak_data.alt_fire_data then
-				auto_id = string.format("firemode_%s_%s", "alt", fire_mode)
-			end
-
-			local firemode_auto = primary_weapon_panel:text({
+			local firemode_secondary = primary_weapon_panel:text({
 				name = "firemode_auto",
 				text = "AUTO",
 				font = "fonts/font_small_shadow_mf",
@@ -771,68 +770,95 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 				align = "right"
 			})
 
-			--firemode_auto:set_top(primary_weapon_panel:h() - 2)
-			firemode_auto:set_bottom(primary_weapon_panel:h())
-			firemode_auto:hide()
+			--firemode_secondary:set_top(primary_weapon_panel:h() - 2)
+			firemode_secondary:set_bottom(primary_weapon_panel:h())
+			firemode_secondary:hide()
+
+			local firemode_burst = primary_weapon_panel:text({
+				name = "firemode_burst",
+				text = "BURST",
+				font = "fonts/font_small_shadow_mf",
+				font_size = 8,
+				layer = 2,
+				color = can_toggle_firemode and Color.white or Color(1, 0.4, 0.4),
+				visible = false,
+				x = -10,
+				align = "right"
+			})
+
+			--firemode_burst:set_top(primary_weapon_panel:h() - 2)
+			firemode_burst:set_bottom(primary_weapon_panel:h())
+			firemode_burst:hide()
 
 			if self._firemode_primary_mapping then
 				fire_mode = self._firemode_primary_mapping[fire_mode] or fire_mode
 			end
 
-			if locked_to_single or not locked_to_auto and fire_mode == "single" then
-				firemode_single:show()
+			if fire_mode == "single" then
+				firemode_primary:show()
+			elseif fire_mode == "burst" then
+				firemode_burst:show()
 			else
-				firemode_auto:show()
+				firemode_secondary:show()
 			end
 		end
 	end
 
 	function HUDTeammate:_create_secondary_weapon_firemode()
-		local secondary_weapon_panel = self._player_panel:child("weapons_panel"):child("secondary_weapon_panel")
-		local old_single = secondary_weapon_panel:child("firemode_single")
-		local old_auto = secondary_weapon_panel:child("firemode_auto")
+		local source_weapon_panel = self._player_panel:child("weapons_panel"):child("secondary_weapon_panel")
+		local old_single = source_weapon_panel:child("firemode_single")
+		local old_auto = source_weapon_panel:child("firemode_auto")
 
 		if alive(old_single) then
-			secondary_weapon_panel:remove(old_single)
+			source_weapon_panel:remove(old_single)
 		end
 
 		if alive(old_auto) then
-			secondary_weapon_panel:remove(old_auto)
+			source_weapon_panel:remove(old_auto)
 		end
 
 		if self._main_player then
-			local equipped_secondary = managers.blackmarket:equipped_secondary()
-			local weapon_tweak_data = tweak_data.weapon[equipped_secondary.weapon_id]
+			local equipped = managers.blackmarket:equipped_secondary()
+			local weapon_tweak_data = tweak_data.weapon[equipped.weapon_id]
 			local fire_mode = weapon_tweak_data.FIRE_MODE
 			local can_toggle_firemode = weapon_tweak_data.CAN_TOGGLE_FIREMODE
 			local toggable_fire_modes = weapon_tweak_data.fire_mode_data and weapon_tweak_data.fire_mode_data.toggable
+			local firemode_single_key = "single"
+			local firemode_auto_key = "auto"
 
 			if toggable_fire_modes then
 				can_toggle_firemode = #toggable_fire_modes > 1
-				local firemode_single_key = toggable_fire_modes[1] or "single"
-				local firemode_auto_key = toggable_fire_modes[2] or "auto"
+				local firemode_single_key = toggable_fire_modes[1] or firemode_single_key
+				local firemode_auto_key = toggable_fire_modes[2] or firemode_auto_key
 				self._firemode_secondary_mapping = {
 					[firemode_single_key] = "single",
 					[firemode_auto_key] = "auto"
 				}
 			end
 
-			local locked_to_auto = managers.weapon_factory:has_perk("fire_mode_auto", equipped_secondary.factory_id, equipped_secondary.blueprint)
-			local locked_to_single = managers.weapon_factory:has_perk("fire_mode_single", equipped_secondary.factory_id, equipped_secondary.blueprint)
-			locked_to_auto = managers.weapon_factory:has_perk("fire_mode_burst", equipped_secondary.factory_id, equipped_secondary.blueprint)
-			local single_id = "firemode_single" .. ((not can_toggle_firemode or locked_to_single) and "_locked" or "")
+			local locked_to_auto = managers.weapon_factory:has_perk("fire_mode_auto", equipped.factory_id, equipped.blueprint)
+			local locked_to_burst = managers.weapon_factory:has_perk("fire_mode_burst", equipped.factory_id, equipped.blueprint)
+			local locked_to_single = managers.weapon_factory:has_perk("fire_mode_single", equipped.factory_id, equipped.blueprint)
 
-			if toggable_fire_modes and can_toggle_firemode then
-				local firemode_single_key = toggable_fire_modes[1] or "single"
-				local firemode_auto_key = toggable_fire_modes[2] or "auto"
-				single_id = string.format("firemode_%s_%s", firemode_single_key, firemode_auto_key)
+			if locked_to_auto then
+				fire_mode = "auto"
+			elseif locked_to_burst then
+				fire_mode = "burst"
+			elseif locked_to_single then
+				fire_mode = "single"
 			end
 
-			if weapon_tweak_data.alt_fire_data then
-				single_id = string.format("firemode_%s_%s", fire_mode, "alt")
+			--[[
+			local is_locked = locked_to_auto or locked_to_burst or locked_to_single
+			local color = Color.white
+			if not can_toggle_firemode then
+				color = Color(1, 0.4, 0.4)
+			elseif is_locked then
+				color = Color(1, 1, 0.4)
 			end
+			]]
 
-			local firemode_single = secondary_weapon_panel:text({
+			local firemode_primary = source_weapon_panel:text({
 				name = "firemode_single",
 				text = "SINGLE",
 				font = "fonts/font_small_shadow_mf",
@@ -844,24 +870,12 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 				align = "right"
 			})
 
-			--firemode_single:set_center_x()
-			--firemode_single:set_top(secondary_weapon_panel:h() - 2)
-			firemode_single:set_bottom(secondary_weapon_panel:h())
-			firemode_single:hide()
+			--firemode_primary:set_center_x()
+			--firemode_primary:set_top(source_weapon_panel:h() - 2)
+			firemode_primary:set_bottom(source_weapon_panel:h())
+			firemode_primary:hide()
 
-			local auto_id = "firemode_auto" .. ((not can_toggle_firemode or locked_to_auto) and "_locked" or "")
-
-			if toggable_fire_modes and can_toggle_firemode then
-				local firemode_single_key = toggable_fire_modes[1] or "single"
-				local firemode_auto_key = toggable_fire_modes[2] or "auto"
-				auto_id = string.format("firemode_%s_%s", firemode_auto_key, firemode_single_key)
-			end
-
-			if weapon_tweak_data.alt_fire_data then
-				auto_id = string.format("firemode_%s_%s", "alt", fire_mode)
-			end
-
-			local firemode_auto = secondary_weapon_panel:text({
+			local firemode_secondary = source_weapon_panel:text({
 				name = "firemode_auto",
 				text = "AUTO",
 				font = "fonts/font_small_shadow_mf",
@@ -873,18 +887,36 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 				align = "right"
 			})
 
-			--firemode_auto:set_top(secondary_weapon_panel:h() - 2)
-			firemode_auto:set_bottom(secondary_weapon_panel:h())
-			firemode_auto:hide()
+			--firemode_secondary:set_top(source_weapon_panel:h() - 2)
+			firemode_secondary:set_bottom(source_weapon_panel:h())
+			firemode_secondary:hide()
+
+			local firemode_burst = source_weapon_panel:text({
+				name = "firemode_burst",
+				text = "BURST",
+				font = "fonts/font_small_shadow_mf",
+				font_size = 8,
+				layer = 2,
+				color = can_toggle_firemode and Color.white or Color(1, 0.4, 0.4),
+				visible = false,
+				x = -10,
+				align = "right"
+			})
+
+			--firemode_burst:set_top(source_weapon_panel:h() - 2)
+			firemode_burst:set_bottom(source_weapon_panel:h())
+			firemode_burst:hide()
 
 			if self._firemode_secondary_mapping then
 				fire_mode = self._firemode_secondary_mapping[fire_mode] or fire_mode
 			end
 
-			if locked_to_single or not locked_to_auto and fire_mode == "single" then
-				firemode_single:show()
+			if fire_mode == "single" then
+				firemode_primary:show()
+			elseif fire_mode == "burst" then
+				firemode_burst:show()
 			else
-				firemode_auto:show()
+				firemode_secondary:show()
 			end
 		end
 	end
@@ -1092,22 +1124,22 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 	end
 
 	NepHook:Post(HUDTeammate, "set_ammo_amount_by_type", function(self, type, max_clip, current_clip, current_left, max, weapon_panel)
-			local weapon_panel = weapon_panel or self._player_panel:child("weapons_panel"):child(type .. "_weapon_panel")
-			local ammo_clip = weapon_panel:child("ammo_clip")
+		local weapon_panel = weapon_panel or self._player_panel:child("weapons_panel"):child(type .. "_weapon_panel")
+		local ammo_clip = weapon_panel:child("ammo_clip")
 
-			-- if self._alt_ammo works too
-			if NepgearsyHUDReborn:GetOption("EnableRealAmmo") then
-				current_left = math.max(0, current_left - max_clip - (current_clip - max_clip))
-			end
+		-- if self._alt_ammo works too
+		if NepgearsyHUDReborn:GetOption("EnableRealAmmo") then
+			current_left = math.max(0, current_left - max_clip - (current_clip - max_clip))
+		end
 
-			ammo_clip:set_text(tostring(current_clip))
-			ammo_clip:set_font_size(string.len(current_clip) < 4 and 30 or 22)
+		ammo_clip:set_text(tostring(current_clip))
+		ammo_clip:set_font_size(string.len(current_clip) < 4 and 30 or 22)
 
-			local ammo_total = weapon_panel:child("ammo_total")
-			ammo_total:set_text(" / " .. tostring(current_left))
-			ammo_total:set_range_color(0, 1, Color(0.8, 0.8, 0.8))
-			ammo_total:set_font_size(string.len(current_left) < 4 and 20 or 16)
-		end)
+		local ammo_total = weapon_panel:child("ammo_total")
+		ammo_total:set_text(" / " .. tostring(current_left))
+		ammo_total:set_range_color(0, 1, Color(0.8, 0.8, 0.8))
+		ammo_total:set_font_size(string.len(current_left) < 4 and 20 or 16)
+	end)
 
 	function HUDTeammate:GetAccountIDByPeer()
 		if self._main_player then
