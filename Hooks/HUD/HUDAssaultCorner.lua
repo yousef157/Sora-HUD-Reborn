@@ -359,7 +359,7 @@ function HUDAssaultCorner:is_safehouse()
 end
 
 function HUDAssaultCorner:is_zm()
-    return managers.job:current_level_id() == "zm_broken_arrow"
+    return managers.job:current_level_id() == "zm_broken_arrow" or managers.job:current_level_id() == "zm_the_forest"
 end
 
 function HUDAssaultCorner:_update_cops_map(change)
@@ -377,11 +377,12 @@ end
 function HUDAssaultCorner:show_casing() return end
 
 function HUDAssaultCorner:_start_assault(text_list, s)
+    text_list = text_list or { "" }
     local assault_panel = self._hud_panel:child("assault_panel_v2")
     local text_panel = assault_panel:child("text_panel")
-    text_list = text_list or {""}
 
     self:_set_text_list(text_list)
+
     self._assault = true
 
     if text_panel then
@@ -401,7 +402,6 @@ function HUDAssaultCorner:_start_assault(text_list, s)
     text_panel:stop()
     text_panel:animate(callback(self, self, "_animate_text"), nil, nil, callback(self, self, "assault_attention_color_function"), s)
     text_panel:animate(ClassClbk(self, "_show_blink"))
-
     self:_set_feedback_color(self._assault_color)
 
     if alive(self._wave_bg_box) then
@@ -409,7 +409,7 @@ function HUDAssaultCorner:_start_assault(text_list, s)
         self._wave_bg_box:animate(callback(self, self, "_animate_wave_started"), self)
     end
 
-    if managers.job:current_level_id() == "zm_the_forest" then
+    if self:is_zm() then
         self:_update_assault_hud_color(Color.red)
     end
 end
@@ -524,12 +524,14 @@ function HUDAssaultCorner:_animate_text(text_panel, bg_box, color, color_functio
             local use_stars = true
 
             if managers.crime_spree:is_active() then
-                text_string = text_string .. managers.localization:to_upper_text("menu_cs_level", { level = managers.experience:cash_string(managers.crime_spree:server_spree_level(), "") })
+                text_string = text_string .. managers.localization:to_upper_text("menu_cs_level", {
+                    level = managers.experience:cash_string(managers.crime_spree:server_spree_level(), "")
+                })
                 use_stars = false
             end
 
             if use_stars then
-                for i = 1, managers.job:current_difficulty_stars(), 1 do
+                for i = 1, managers.job:current_difficulty_stars() do
                     text_string = text_string .. managers.localization:get_default_macro("BTN_SKULL")
                 end
             end
@@ -603,17 +605,20 @@ function HUDAssaultCorner:_animate_text(text_panel, bg_box, color, color_functio
 end
 
 function HUDAssaultCorner:show_point_of_no_return_timer()
-    self._point_of_no_return = true
-
     local delay_time = self._assault and 1.2 or 0
+
+    self:_start_assault(self:_get_no_return_textlist())
+
     local box_text_panel = self._assault_panel_v2:child("text_panel")
+
     box_text_panel:stop()
     box_text_panel:clear()
     box_text_panel:animate(ClassClbk(self, "_animate_show_noreturn"), delay_time)
     self.NoReturnText:animate(ClassClbk(self, "_show_blink"))
     self:_set_feedback_color(NepgearsyHUDReborn:GetOption("SoraPONRBarColor"))
     self:_update_assault_hud_color(NepgearsyHUDReborn:GetOption("SoraPONRBarColor"))
-    self:_start_assault(self:_get_no_return_textlist())
+
+    self._point_of_no_return = true
 end
 
 function HUDAssaultCorner:_animate_show_noreturn(point_of_no_return_panel, delay_time)
@@ -644,15 +649,15 @@ function HUDAssaultCorner:set_control_info(data)
     self.num_hostages:animate(ClassClbk(self, "_show_blink"))
 end
 
-function HUDAssaultCorner:_show_icon_assaultbox(icon_assaultbox)
-end
+function HUDAssaultCorner:_show_icon_assaultbox() end
 
-function HUDAssaultCorner:_hide_icon_assaultbox(icon_assaultbox)
-end
+function HUDAssaultCorner:_hide_icon_assaultbox() end
 
 function HUDAssaultCorner:hide_point_of_no_return_timer()
     self.NoReturnText:animate(ClassClbk(self, "_hide_blink"))
+
     self._point_of_no_return = false
+
     self:_update_assault_hud_color(NepgearsyHUDReborn:GetOption("SoraAssaultBarColor"))
     self:_start_assault(self:_get_assault_strings())
     self:_set_feedback_color(nil)

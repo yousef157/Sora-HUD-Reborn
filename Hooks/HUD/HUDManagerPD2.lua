@@ -35,7 +35,7 @@ function HUDManager:_create_teammates_panel(hud)
 		local player_gap = 0
 		local small_gap = ((teammates_panel:w() - player_gap) - teammate_w * 4) / 3
 
-		for i = 1, 4, 1 do
+		for i = 1, 4 do
 			local is_player = true
 			local is_four = i == 4
 			self._hud.teammate_panels_data[i] = {
@@ -77,7 +77,7 @@ function HUDManager:_create_teammates_panel(hud)
 		local player_gap = 0
 		local small_gap = 0
 
-		for i = 1, 4, 1 do
+		for i = 1, 4 do
 			local is_player = true
 			local is_four = i == 4
 			self._hud.teammate_panels_data[i] = {
