@@ -3,11 +3,13 @@ local HighlightColor = Color(0.5, 0.25, 0.25, 0.32)
 local font = "fonts/font_eurostile_ext"
 local MenuBgs = Color(0.75, 0, 0, 0)
 
+--[[
 local function make_fine_text(text)
     local x, y, w, h = text:text_rect()
     text:set_size(w, h)
     text:set_position(math.round(text:x()), math.round(text:y()))
 end
+]]
 
 -- Based on BeardLib Editor & HoloUI's menu.
 NepHudMenu = NepHudMenu or class()
@@ -68,7 +70,7 @@ function NepHudMenu:InitTopBar()
         offset_x = 20,
         help = "NepgearsyHUDRebornMenu/Help/DisableBackground",
         localized = true,
-        on_callback = ClassClbk(self, "background_switch")
+        on_callback = callback(self, self, "background_switch")
     })
 
     self.MWSProfile = self.TopBar:ImageButton({
@@ -79,7 +81,7 @@ function NepHudMenu:InitTopBar()
         offset_x = 5,
         help = "NepgearsyHUDRebornMenu/Help/MWSProfile",
         localized = true,
-        on_callback = ClassClbk(self, "open_url", "https://modworkshop.net/mod/22152")
+        on_callback = callback(self, self, "open_url", "https://modworkshop.net/mod/22152")
     })
 
     self.HUDVersion = self.TopBar:Button({
@@ -96,7 +98,7 @@ function NepHudMenu:InitTopBar()
         text_vertical = "center",
         font_size = 25,
         font = NepgearsyHUDReborn:SetFont(font),
-        on_callback = ClassClbk(self, "open_url", "https://github.com/AzureeDev/Sora-HUD-Reborn/commits/master")
+        on_callback = callback(self, self, "open_url", "https://github.com/AzureeDev/Sora-HUD-Reborn/commits/master")
     })
 
     self.PostIssue = self.TopBar:Button({
@@ -115,7 +117,7 @@ function NepHudMenu:InitTopBar()
         text_vertical = "center",
         font_size = 15,
         font = NepgearsyHUDReborn:SetFont(font),
-        on_callback = ClassClbk(self, "open_url", "https://github.com/AzureeDev/Sora-HUD-Reborn/issues")
+        on_callback = callback(self, self, "open_url", "https://github.com/AzureeDev/Sora-HUD-Reborn/issues")
     })
 end
 
@@ -196,7 +198,7 @@ function NepHudMenu:InitMainMenu()
         items = NepgearsyHUDReborn.localization,
         value = NepgearsyHUDReborn:GetOption("ForcedLocalization"),
         text = "NepgearsyHUDRebornMenu/ForcedLocalization",
-        on_callback = ClassClbk(self, "MainClbk")
+        on_callback = callback(self, self, "MainClbk")
     })
 
     self.MainMenuOptionsCat = self.MainMenu:Divider({
@@ -217,7 +219,7 @@ function NepHudMenu:InitMainMenu()
             border_left = true,
             text = "NepgearsyHUDRebornMenu/Buttons/HUDOptions",
             localized = true,
-            on_callback = ClassClbk(self, "InitHUDOptions")
+            on_callback = callback(self, self, "InitHUDOptions")
         }),
 
         MenuOptionsButton = self.MainMenu:Button({
@@ -226,7 +228,7 @@ function NepHudMenu:InitMainMenu()
             border_left = true,
             text = "NepgearsyHUDRebornMenu/Buttons/MenuOptionsButton",
             localized = true,
-            on_callback = ClassClbk(self, "InitMenuOptions")
+            on_callback = callback(self, self, "InitMenuOptions")
         }),
 
         ColorOptionsButton = self.MainMenu:Button({
@@ -235,7 +237,7 @@ function NepHudMenu:InitMainMenu()
             border_left = true,
             text = "NepgearsyHUDRebornMenu/Buttons/ColorOptions",
             localized = true,
-            on_callback = ClassClbk(self, "InitColorOptions")
+            on_callback = callback(self, self, "InitColorOptions")
         }),
 
         TeammatePanelSkinButton = self.MainMenu:Button({
@@ -244,7 +246,7 @@ function NepHudMenu:InitMainMenu()
             border_left = true,
             text = "NepgearsyHUDRebornMenu/Buttons/TeammatePanelSkinButton",
             localized = true,
-            on_callback = ClassClbk(self, "InitTeammateSkins")
+            on_callback = callback(self, self, "InitTeammateSkins")
         }),
 
         DiscordRichPresenceButton = self.MainMenu:Button({
@@ -253,7 +255,7 @@ function NepHudMenu:InitMainMenu()
             border_left = true,
             text = "NepgearsyHUDRebornMenu/Buttons/DiscordRichPresenceButton",
             localized = true,
-            on_callback = ClassClbk(self, "InitDiscordRichPresence")
+            on_callback = callback(self, self, "InitDiscordRichPresence")
         })
     }
 end
@@ -279,7 +281,7 @@ function NepHudMenu:InitHUDOptions()
             items = NepgearsyHUDReborn.fonts,
             value = NepgearsyHUDReborn:GetOption("AssaultBarFont"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/AssaultBarFont",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         PlayerNameFont = self.MainMenu:ComboBox({
@@ -288,7 +290,7 @@ function NepHudMenu:InitHUDOptions()
             items = NepgearsyHUDReborn.fonts,
             value = NepgearsyHUDReborn:GetOption("PlayerNameFont"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/PlayerNameFont",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         InteractionFont = self.MainMenu:ComboBox({
@@ -297,7 +299,7 @@ function NepHudMenu:InitHUDOptions()
             items = NepgearsyHUDReborn.fonts,
             value = NepgearsyHUDReborn:GetOption("InteractionFont"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/InteractionFont",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         --[[
@@ -308,7 +310,7 @@ function NepHudMenu:InitHUDOptions()
             items = NepgearsyHUDReborn.TeammatePanelStyles,
             value = NepgearsyHUDReborn:GetOption("TeammatePanelStyle"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/TeammatePanelStyle",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
         ]]
 
@@ -318,7 +320,7 @@ function NepHudMenu:InitHUDOptions()
             offset_y = 20,
             value = NepgearsyHUDReborn:GetOption("EnableMinimap"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/Minimap",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         MinimapForce = self.MainMenu:Toggle({
@@ -327,7 +329,7 @@ function NepHudMenu:InitHUDOptions()
             value = NepgearsyHUDReborn:GetOption("MinimapForce"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/MinimapForce",
             help = "NepgearsyHUDRebornMenu/Buttons/HUD/MinimapForceHelp",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         MinimapSize = self.MainMenu:Slider({
@@ -338,7 +340,7 @@ function NepHudMenu:InitHUDOptions()
             min = 150,
             max = 200,
             step = 1,
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         MinimapZoom = self.MainMenu:Slider({
@@ -349,7 +351,7 @@ function NepHudMenu:InitHUDOptions()
             min = 0.25,
             max = 1,
             step = 0.01,
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         ActivateMoneyHUD = self.MainMenu:Toggle({
@@ -357,7 +359,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("ActivateMoneyHUD"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/ActivateMoneyHUD",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         self.MainMenu:Divider({ size = 5 }),
@@ -368,7 +370,7 @@ function NepHudMenu:InitHUDOptions()
             value = NepgearsyHUDReborn:GetOption("EnableTrackers"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/Trackers",
             help = "NepgearsyHUDRebornMenu/Buttons/HUD/TrackersHelp",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         CopTracker = self.MainMenu:Toggle({
@@ -376,7 +378,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("EnableCopTracker"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/CopTracker",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         AssaultTrackersScale = self.MainMenu:Slider({
@@ -388,7 +390,7 @@ function NepHudMenu:InitHUDOptions()
             min = 0.1,
             max = 2,
             step = 0.01,
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         AssaultScale = self.MainMenu:Slider({
@@ -399,7 +401,7 @@ function NepHudMenu:InitHUDOptions()
             min = 0.1,
             max = 2,
             step = 0.01,
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         self.MainMenu:Divider({ size = 5 }),
@@ -410,7 +412,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("HealthStyle"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/HealthStyle",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         StatusNumberType = self.MainMenu:ComboBox({
@@ -419,7 +421,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("StatusNumberType"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/StatusNumberType",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         EnablePlayerLevel = self.MainMenu:Toggle({
@@ -427,7 +429,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("EnablePlayerLevel"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/EnablePlayerLevel",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         EnableSteamAvatars = self.MainMenu:Toggle({
@@ -435,7 +437,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("EnableSteamAvatars"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/EnableSteamAvatars",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         EnableDownCounter = self.MainMenu:Toggle({
@@ -443,7 +445,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("EnableDownCounter"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/EnableDownCounter",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         RealAmmo = self.MainMenu:Toggle({
@@ -451,7 +453,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("EnableRealAmmo"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/RealAmmo",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         EnableInteraction = self.MainMenu:Toggle({
@@ -459,7 +461,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("EnableInteraction"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/EnableInteraction",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         ActivateStaminaBar = self.MainMenu:Toggle({
@@ -467,7 +469,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("ActivateStaminaBar"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/ActivateStaminaBar",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         self.MainMenu:Divider({ size = 5 }),
@@ -477,7 +479,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("EnableHPSMeter"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/EnableHPSMeter",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         HPSRefreshRate = self.MainMenu:Slider({
@@ -488,7 +490,7 @@ function NepHudMenu:InitHUDOptions()
             min = 0.1,
             max = 10,
             step = 1,
-            on_callback = ClassClbk(self, "MainClbk"),
+            on_callback = callback(self, self, "MainClbk"),
             --enabled = NepgearsyHUDReborn:GetOption("EnableHPSMeter")
         }),
 
@@ -497,7 +499,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("ShowHPSCurrent"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/ShowHPSCurrent",
-            on_callback = ClassClbk(self, "MainClbk"),
+            on_callback = callback(self, self, "MainClbk"),
             --enabled = NepgearsyHUDReborn:GetOption("EnableHPSMeter")
         }),
 
@@ -509,7 +511,7 @@ function NepHudMenu:InitHUDOptions()
             min = 1,
             max = 10,
             step = 1,
-            on_callback = ClassClbk(self, "MainClbk"),
+            on_callback = callback(self, self, "MainClbk"),
             --enabled = NepgearsyHUDReborn:GetOption("EnableHPSMeter")
         }),
 
@@ -518,7 +520,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("ShowHPSTotal"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/ShowHPSTotal",
-            on_callback = ClassClbk(self, "MainClbk"),
+            on_callback = callback(self, self, "MainClbk"),
             --enabled = NepgearsyHUDReborn:GetOption("EnableHPSMeter")
         }),
 
@@ -529,7 +531,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("ColorWithSkinPanels"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/ColorWithSkinPanels",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         self.MainMenu:Divider({ size = 5 }),
@@ -539,7 +541,7 @@ function NepHudMenu:InitHUDOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("EnableSteamAvatarsInChat"),
             text = "NepgearsyHUDRebornMenu/Buttons/HUD/EnableSteamAvatarsInChat",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         Scale = self.MainMenu:Slider({
@@ -552,7 +554,7 @@ function NepHudMenu:InitHUDOptions()
             min = 0.1,
             max = 1.5,
             step = 0.01,
-            on_callback = ClassClbk(self, "SetHudScaleSpacing")
+            on_callback = callback(self, self, "SetHudScaleSpacing")
         }),
 
         Spacing = self.MainMenu:Slider({
@@ -564,7 +566,7 @@ function NepHudMenu:InitHUDOptions()
             min = 0.1,
             max = 1,
             step = 0.01,
-            on_callback = ClassClbk(self, "SetHudScaleSpacing")
+            on_callback = callback(self, self, "SetHudScaleSpacing")
         })
     }
 
@@ -576,7 +578,7 @@ function NepHudMenu:InitHUDOptions()
         border_left = true,
         localized = true,
         text = "NepgearsyHUDRebornMenu/Buttons/ResetOption",
-        on_callback = ClassClbk(self, "ResetHUD")
+        on_callback = callback(self, self, "ResetHUD")
     })
 
     self:CreateSharedBackButton()
@@ -603,7 +605,7 @@ function NepHudMenu:InitMenuOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("EnableSteamAvatarsInLobby"),
             text = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/EnableSteamAvatarsInLobby",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         HorizontalLoadout = self.MainMenu:Toggle({
@@ -611,7 +613,7 @@ function NepHudMenu:InitMenuOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("EnableHorizontalLoadout"),
             text = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/EnableHorizontalLoadout",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         HorizontalPerkDeck = self.MainMenu:Toggle({
@@ -620,7 +622,7 @@ function NepHudMenu:InitMenuOptions()
             value = NepgearsyHUDReborn:GetOption("HorizontalPerkDeck"),
             text = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/HorizontalPerkDeck",
             help = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/HorizontalPerkDeckHelp",
-            on_callback = ClassClbk(self, "MainClbk"),
+            on_callback = callback(self, self, "MainClbk"),
             --enabled = NepgearsyHUDReborn:GetOption("EnableHorizontalLoadout")
         }),
 
@@ -631,7 +633,7 @@ function NepHudMenu:InitMenuOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("EnableStarring"),
             text = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/StarringScreen",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         StarringColor = self.MainMenu:ComboBox({
@@ -640,7 +642,7 @@ function NepHudMenu:InitMenuOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("StarringColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/StarringColor",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         StarringText = self.MainMenu:TextBox({
@@ -648,7 +650,7 @@ function NepHudMenu:InitMenuOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("StarringText"),
             text = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/StarringText",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         ShowMapStarring = self.MainMenu:Toggle({
@@ -656,7 +658,7 @@ function NepHudMenu:InitMenuOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("ShowMapStarring"),
             text = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/ShowMapStarring",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         ShowMapTexture = self.MainMenu:Toggle({
@@ -665,7 +667,7 @@ function NepHudMenu:InitMenuOptions()
             value = NepgearsyHUDReborn:GetOption("ShowMapTexture"),
             text = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/ShowMapTexture",
             help = "NepgearsyHUDRebornMenu/Buttons/LobbyMenu/ShowMapTextureHelp",
-            on_callback = ClassClbk(self, "MainClbk"),
+            on_callback = callback(self, self, "MainClbk"),
             --enabled = NepgearsyHUDReborn:GetOption("ShowMapStarring")
         })
     }
@@ -696,7 +698,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraCPColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/CPColor",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         SoraCPBorderColor = self.MainMenu:ColorTextBox({
@@ -704,7 +706,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraCPBorderColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/CPBorderColor",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         self.MainMenu:Divider({ size = 5 }),
@@ -716,7 +718,7 @@ function NepHudMenu:InitColorOptions()
             value = NepgearsyHUDReborn:GetOption("HealthColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/HealthColor",
             help = "NepgearsyHUDRebornMenu/Buttons/Colors/HealthColorHelp",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         ShieldColor = self.MainMenu:ComboBox({
@@ -725,7 +727,7 @@ function NepHudMenu:InitColorOptions()
             items = NepgearsyHUDReborn.colors,
             value = NepgearsyHUDReborn:GetOption("ShieldColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/ShieldColor",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         self.MainMenu:Divider({ size = 5 }),
@@ -735,7 +737,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraObjectiveColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/ObjectiveColor",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         SoraInteractionColor = self.MainMenu:ColorTextBox({
@@ -743,7 +745,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraInteractionColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/InteractionColor",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         self.MainMenu:Divider({ size = 5 }),
@@ -753,7 +755,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraAssaultBarColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/AssaultBar",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         SoraSurvivedBarColor = self.MainMenu:ColorTextBox({
@@ -761,7 +763,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraSurvivedBarColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/AssaultBarSurvived",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         SoraStealthBarColor = self.MainMenu:ColorTextBox({
@@ -769,7 +771,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraStealthBarColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/AssaultBarStealth",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         SoraPONRBarColor = self.MainMenu:ColorTextBox({
@@ -777,7 +779,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraPONRBarColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/AssaultBarPONR",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         SoraWintersBarColor = self.MainMenu:ColorTextBox({
@@ -785,7 +787,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraWintersBarColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/AssaultBarWinters",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         self.MainMenu:Divider({ size = 5 }),
@@ -795,7 +797,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraPeerOneColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/PeerOneColor",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         SoraPeerTwoColor = self.MainMenu:ColorTextBox({
@@ -803,7 +805,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraPeerTwoColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/PeerTwoColor",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         SoraPeerThreeColor = self.MainMenu:ColorTextBox({
@@ -811,7 +813,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraPeerThreeColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/PeerThreeColor",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         SoraPeerFourColor = self.MainMenu:ColorTextBox({
@@ -819,7 +821,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraPeerFourColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/PeerFourColor",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         SoraAIColor = self.MainMenu:ColorTextBox({
@@ -827,7 +829,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("SoraAIColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/AIColor",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         self.MainMenu:Divider({ size = 5 }),
@@ -837,7 +839,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("StaminaBarColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/StaminaBarColor",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         LowStaminaBarColor = self.MainMenu:ColorTextBox({
@@ -845,7 +847,7 @@ function NepHudMenu:InitColorOptions()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("LowStaminaBarColor"),
             text = "NepgearsyHUDRebornMenu/Buttons/Colors/LowStaminaBarColor",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         })
     }
 
@@ -857,7 +859,7 @@ function NepHudMenu:InitColorOptions()
         border_left = true,
         localized = true,
         text = "NepgearsyHUDRebornMenu/Buttons/ResetOption",
-        on_callback = ClassClbk(self, "ResetColors")
+        on_callback = callback(self, self, "ResetColors")
     })
 
     self:CreateSharedBackButton()
@@ -923,7 +925,7 @@ function NepHudMenu:InitTeammateSkins()
             texture = "NepgearsyHUDReborn/HUD/TeammateSkinsCategories/" .. category_id,
             w = 48,
             h = 48,
-            on_callback = ClassClbk(self, "ClbkSkinChangeCat", category_id),
+            on_callback = callback(self, self, "ClbkSkinChangeCat", category_id),
             border_bottom = true
         })
     end
@@ -975,7 +977,7 @@ function NepHudMenu:GenerateSkinButtonsByCat(category)
                     offset_x = 5,
                     offset_y = 15,
                     background_color = Color(0.35, 0, 0, 0),
-                    on_callback = ClassClbk(self, "SkinSetClbk", skin_id),
+                    on_callback = callback(self, self, "SkinSetClbk", skin_id),
                     enabled = not NepgearsyHUDReborn:IsTeammatePanelWide() or skin_data.wide_counterpart
                 })
 
@@ -1081,7 +1083,7 @@ function NepHudMenu:InitDiscordRichPresence()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("UseDiscordRichPresence"),
             text = "NepgearsyHUDRebornMenu/Buttons/Menu/UseDiscordRichPresence",
-            on_callback = ClassClbk(self, "MainClbk")
+            on_callback = callback(self, self, "MainClbk")
         }),
 
         DiscordRichPresenceType = self.MainMenu:ComboBox({
@@ -1090,7 +1092,18 @@ function NepHudMenu:InitDiscordRichPresence()
             items = NepgearsyHUDReborn.DiscordRichPresenceTypes,
             value = NepgearsyHUDReborn:GetOption("DiscordRichPresenceType"),
             text = "NepgearsyHUDRebornMenu/Buttons/Menu/DiscordRichPresenceType",
-            on_callback = ClassClbk(self, "MainClbk"),
+            on_callback = callback(self, self, "MainClbk"),
+            enabled = has_presence_active
+        }),
+
+        DiscordRichPresenceLargeImageType = self.MainMenu:ComboBox({
+            name = "DiscordRichPresenceLargeImageType",
+            border_left = true,
+            items = NepgearsyHUDReborn.DiscordRichPresenceLargeImageTypes,
+            value = NepgearsyHUDReborn:GetOption("DiscordRichPresenceLargeImageType"),
+            text = "NepgearsyHUDRebornMenu/Buttons/Menu/DiscordRichPresenceLargeImageType",
+            help = "NepgearsyHUDRebornMenu/Buttons/Menu/DiscordRichPresenceLargeImageTypeHelp",
+            on_callback = callback(self, self, "MainClbk"),
             enabled = has_presence_active
         }),
 
@@ -1099,7 +1112,25 @@ function NepHudMenu:InitDiscordRichPresence()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("DRPAllowTimeElapsed"),
             text = "NepgearsyHUDRebornMenu/Buttons/Menu/DRPAllowTimeElapsed",
-            on_callback = ClassClbk(self, "MainClbk"),
+            on_callback = callback(self, self, "MainClbk"),
+            enabled = has_presence_active
+        }),
+
+        DiscordUsername = self.MainMenu:Toggle({
+            name = "DiscordUsername",
+            border_left = true,
+            value = NepgearsyHUDReborn:GetOption("DiscordUsername"),
+            text = "NepgearsyHUDRebornMenu/Buttons/Menu/DiscordUsername",
+            on_callback = callback(self, self, "MainClbk"),
+            enabled = has_presence_active
+        }),
+
+        DiscordUsernameCustom = self.MainMenu:TextBox({
+            name = "DiscordUsernameCustom",
+            border_left = true,
+            value = NepgearsyHUDReborn:GetOption("DiscordUsernameCustom"),
+            text = "NepgearsyHUDRebornMenu/Buttons/Menu/DiscordUsernameCustom",
+            on_callback = callback(self, self, "MainClbk"),
             enabled = has_presence_active
         }),
 
@@ -1117,7 +1148,7 @@ function NepHudMenu:InitDiscordRichPresence()
             border_left = true,
             value = NepgearsyHUDReborn:GetOption("DiscordRichPresenceCustom"),
             text = "NepgearsyHUDRebornMenu/Buttons/Menu/DiscordRichPresenceCustom",
-            on_callback = ClassClbk(self, "MainClbk"),
+            on_callback = callback(self, self, "MainClbk"),
             enabled = has_presence_active
         })
     }
@@ -1133,7 +1164,7 @@ function NepHudMenu:CreateSharedBackButton()
         text = "NepgearsyHUDRebornMenu/Buttons/Back",
         offset_y = 30,
         localized = true,
-        on_callback = ClassClbk(self, "InitMainMenu")
+        on_callback = callback(self, self, "InitMainMenu")
     })
 end
 
@@ -1263,7 +1294,7 @@ function NepHudMenu:InitChangelog()
         highlight_color = Color.transparent,
         border_left = true,
         localized = false,
-        on_callback = ClassClbk(self, "open_url", "https://github.com/AzureeDev/Sora-HUD-Reborn/commits/master")
+        on_callback = callback(self, self, "open_url", "https://github.com/AzureeDev/Sora-HUD-Reborn/commits/master")
     })
     ]]
 
@@ -1302,7 +1333,7 @@ function NepHudMenu:InitBack()
         text_align = "center",
         text_vertical = "center",
         font_size = 20,
-        on_callback = ClassClbk(self._menu, "SetEnabled", false)
+        on_callback = callback(self, self._menu, "SetEnabled", false)
     })
 end
 
@@ -1376,6 +1407,7 @@ function NepHudMenu:MainClbk(item)
                 if enabled then
                     self:background_switch()
                 end
+
                 QuickMenu:new(
                     managers.localization:text("dialog_warning_title"),
                     "This localization may not support fonts beyond font_large_mf.",
@@ -1400,13 +1432,14 @@ function NepHudMenu:MainClbk(item)
             if enabled then
                 self:background_switch()
             end
+
             QuickMenu:new(
                 managers.localization:text("dialog_warning_title"),
                 "The game needs to restart to apply this change. Do you want to quit now?",
                 {
                     {
                         text = managers.localization:text("dialog_yes"),
-                        callback = ClassClbk(self, "GameClose"),
+                        callback = callback(Setup, Setup, "quit"),
                     },
                     {
                         text = managers.localization:text("dialog_no"),
@@ -1422,10 +1455,6 @@ function NepHudMenu:MainClbk(item)
             )
         end
     end
-end
-
-function NepHudMenu:GameClose()
-    setup:quit()
 end
 
 function NepHudMenu:SkinSetClbk(skin_id)

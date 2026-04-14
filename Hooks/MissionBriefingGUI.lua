@@ -1,6 +1,6 @@
 if NepgearsyHUDReborn:GetOption("EnableHorizontalLoadout") then
 	NepHook:Post(TeamLoadoutItem, "init", function(self)
-		local quarter_height = self._panel:h() / tweak_data.max_players
+		local quarter_height = self._panel:h() / #self._player_slots
 		for i, slot in ipairs(self._player_slots) do
 			local panel = slot.panel
 			panel:set_x(0)

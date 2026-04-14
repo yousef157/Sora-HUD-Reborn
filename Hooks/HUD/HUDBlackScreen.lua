@@ -1,5 +1,6 @@
 if NepgearsyHUDReborn:GetOption("EnableStarring") or NepgearsyHUDReborn:GetOption("ShowMapStarring") then
 	NepHook:Post(HUDBlackScreen, "init", function(self)
+		--[[
 		local function make_fine_text(text)
 			local x, y, w, h = text:text_rect()
 			text:set_size(w, h)
@@ -7,36 +8,16 @@ if NepgearsyHUDReborn:GetOption("EnableStarring") or NepgearsyHUDReborn:GetOptio
 
 			return x, y, w, h
 		end
-
-		local stage_data = managers.job:current_stage_data()
-		local level_data = managers.job:current_level_data()
-		local job_data = managers.job:current_job_data() or {}
-		local level_tweak = tweak_data.levels[Global.level_data.level_id] or {}
-		local name_id = stage_data and stage_data.name_id or level_data and level_data.name_id or nil
+		]]
 
 		local bs_panel = self._blackscreen_panel -- bullshit panel XD
-		local starring_panel = bs_panel:panel({
-			name = "starring_panel",
-			visible = true,
-			vertical = "left",
-			align = "left"
-		})
 
 		if NepgearsyHUDReborn:GetOption("ShowMapStarring") then
-			if NepgearsyHUDReborn:GetOption("ShowMapTexture") then
-				local bg_texture = level_data and level_data.load_screen or level_tweak and level_tweak.load_screen or level_tweak and level_tweak.load_data and level_tweak.load_data.image or job_data and job_data.load_screen
-				if bg_texture then
-					self._blackscreen_panel:bitmap({
-						texture = bg_texture,
-						w = self._blackscreen_panel:w(),
-						h = self._blackscreen_panel:h(),
-						alpha = 0.25,
-						layer = -1
-					})
-				end
-			end
+			local stage_data = managers.job:current_stage_data()
+			local level_data = managers.job:current_level_data()
 
-			if name_id then
+			local name_id = stage_data and stage_data.name_id or level_data and level_data.name_id
+			if name_id then --and not (managers.crime_spree and managers.crime_spree:is_active())
 				local heist_panel_text = bs_panel:text({
 					name = "heist_panel_text",
 					text = managers.localization:to_upper_text(name_id),
@@ -66,9 +47,9 @@ if NepgearsyHUDReborn:GetOption("EnableStarring") or NepgearsyHUDReborn:GetOptio
 							0
 						},
 						w = bs_panel:w(),
+						y = heist_panel_text:y() + 35,
 						color = Color.red
 					})
-					od_text:set_y(heist_panel_text:y() + 35)
 				end
 				--[[
 				local narr_tweak = tweak_data.narrative.jobs[Global.level_data.level_id]
@@ -96,9 +77,31 @@ if NepgearsyHUDReborn:GetOption("EnableStarring") or NepgearsyHUDReborn:GetOptio
 				end
 				]]
 			end
+
+			if NepgearsyHUDReborn:GetOption("ShowMapTexture") then
+				local job_data = managers.job:current_job_data()
+				local level_tweak = tweak_data.levels[Global.level_data.level_id] or {}
+				local bg_texture = level_data and level_data.load_screen or level_tweak and level_tweak.load_screen or level_tweak and level_tweak.load_data and level_tweak.load_data.image or job_data and job_data.load_screen
+				if bg_texture then
+					bs_panel:bitmap({
+						texture = bg_texture,
+						w = bs_panel:w(),
+						h = bs_panel:h(),
+						alpha = 0.25,
+						layer = -1
+					})
+				end
+			end
 		end
 
 		if NepgearsyHUDReborn:GetOption("EnableStarring") then
+			local starring_panel = bs_panel:panel({
+				name = "starring_panel",
+				visible = true,
+				vertical = "left",
+				align = "left"
+			})
+
 			local starring_with = starring_panel:text({
 				name = "starring_with",
 				text = "STARRING",
@@ -106,19 +109,22 @@ if NepgearsyHUDReborn:GetOption("EnableStarring") or NepgearsyHUDReborn:GetOptio
 				font_size = 30,
 				vertical = "left",
 				align = "left",
-				valign = { 0.4, 0 },
+				valign = {
+					0.4, 
+					0
+				},
 				color = Color(1, 0.7, 0)
 			})
 
 			local start_y = starring_panel:y() + 30
 			local avatar_size = 40
-			for i = 1, 4 do
+			for i = 1, tweak_data.max_players or 4 do
 				local avatar = starring_panel:bitmap({
 					name = "avatar_player_" .. i,
 					w = avatar_size,
 					h = avatar_size,
-					visible = false,
-					texture = "guis/textures/pd2/none_icon"
+					texture = "guis/textures/pd2/none_icon",
+					visible = false
 				})
 				avatar:set_top(start_y + (i - 1) * 45)
 
@@ -129,12 +135,15 @@ if NepgearsyHUDReborn:GetOption("EnableStarring") or NepgearsyHUDReborn:GetOptio
 					font_size = 24,
 					vertical = "left",
 					align = "left",
-					valign = { 0.4, 0 },
+					valign = {
+						0.4,
+						0
+					},
+					x = avatar:x() + 50,
+					y = avatar:y() + 10,
 					color = Color.white,
 					visible = false
 				})
-				player_text:set_x(avatar:x() + 50)
-				player_text:set_y(avatar:y() + 10)
 			end
 		end
 	end)

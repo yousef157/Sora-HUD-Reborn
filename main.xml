@@ -11,33 +11,37 @@
 
         <hook file="ChatManager.lua" source_file="lib/managers/chatmanager"/>
         <hook file="MissionBriefingGUI.lua" source_file="lib/managers/menu/missionbriefinggui"/>
-        <hook file="CivilianDamage.lua" source_file="lib/units/civilians/civiliandamage"/>
-        <hook file="PlayerDamage.lua" source_file="lib/units/beings/player/playerdamage"/>
-        <hook file="EnemyManager.lua" source_file="lib/managers/enemymanager"/>
         <hook file="PlayerManager.lua" source_file="lib/managers/playermanager"/>
         <hook file="ConnectionNetworkHandler.lua" source_file="lib/network/base/handlers/connectionnetworkhandler"/>
-        <hook file="ElementTerminateAssault.lua" source_file="lib/managers/mission/elementterminateassault"/>
         <hook file="PlatformManager.lua" source_file="lib/managers/platformmanager"/>
-        <hook file="MoneyManager.lua" source_file="lib/managers/moneymanager"/>
         <hook file="ContractBoxGui.lua" source_file="lib/managers/menu/contractboxgui"/>
+        
+        <hook file="HUD/HUDAssaultCorner.lua" source_file="lib/managers/hud/hudassaultcorner"/>
+        <hook file="HUD/HUDAssaultCorner.lua" source_file="lib/managers/mission/elementterminateassault"/>
+        <hook file="HUD/HUDAssaultCorner.lua" source_file="lib/managers/group_ai_states/groupaistatebesiege"/>
+        <hook file="HUD/HUDAssaultCorner.lua" source_file="lib/managers/hud/hudplayercustody"/>
+        <hook file="HUD/HUDAssaultCorner.lua" source_file="lib/units/civilians/civiliandamage"/>
+        <hook file="HUD/HUDAssaultCorner.lua" source_file="lib/managers/statisticsmanager"/>
+        <hook file="HUD/HUDAssaultCorner.lua" source_file="lib/managers/enemymanager"/>
+
+        <hook file="HUD/HUDManagerPD2.lua" source_file="lib/managers/hudmanagerpd2"/>
+        <hook file="HUD/HUDManagerPD2.lua" source_file="lib/units/beings/player/playerdamage"/>
+        <hook file="HUD/HUDManagerPD2.lua" source_file="core/lib/managers/coreguidatamanager"/>
+
+        <hook file="HUD/HUDMoney.lua" source_file="lib/managers/hudmanagerpd2"/>
+        <hook file="HUD/HUDMoney.lua" source_file="lib/managers/moneymanager"/>
 
         <hook file="HUD/HUDMissionBriefing.lua" source_file="lib/managers/hud/hudmissionbriefing"/>
-        <hook file="HUD/HUDPlayerCustody.lua" source_file="lib/managers/hud/hudplayercustody"/>
         <hook file="HUD/HUDBlackScreen.lua" source_file="lib/managers/hud/hudblackscreen"/>
         <hook file="HUD/HUDObjectives.lua" source_file="lib/managers/hud/hudobjectives"/>
-        <hook file="HUD/HUDManagerPD2.lua" source_file="lib/managers/hudmanagerpd2"/>
-        <hook file="HUD/HUDAssaultCorner.lua" source_file="lib/managers/hud/hudassaultcorner"/>
         <hook file="HUD/HUDHeistTimer.lua" source_file="lib/managers/hud/hudheisttimer"/>
-        <hook file="HUD/GroupAIStateBeSiege.lua" source_file="lib/managers/group_ai_states/groupaistatebesiege"/>
         <hook file="HUD/GroupAIStateBase.lua" source_file="lib/managers/group_ai_states/groupaistatebase"/>
-        <hook file="HUD/StatisticsManager.lua" source_file="lib/managers/statisticsmanager"/>
         <hook file="HUD/HUDChat.lua" source_file="lib/managers/hud/hudchat"/>
         <hook file="HUD/HUDTeammate.lua" source_file="lib/managers/hud/hudteammate"/>
         <hook file="HUD/HUDHint.lua" source_file="lib/managers/hud/hudhint"/>
         <hook file="HUD/HUDPresenter.lua" source_file="lib/managers/hud/hudpresenter"/>
         <hook file="HUD/HUDInteraction.lua" source_file="lib/managers/hud/hudinteraction"/>
         <hook file="HUD/HUDStamina.lua" source_file="lib/managers/hudmanagerpd2"/>
-        <hook file="HUD/HUDMoney.lua" source_file="lib/managers/hudmanagerpd2"/>
 
         <hook file="HUD/HUDMinimap.lua" source_file="lib/managers/hudmanagerpd2"/>
         <hook file="HUD/HUDMinimap.lua" source_file="lib/managers/criminalsmanager"/>
@@ -114,12 +118,16 @@
 
             <option type="bool" default_value="true" name="UseDiscordRichPresence"/>
             <option type="number" default_value="1" name="DiscordRichPresenceType"/>
+            <option type="number" default_value="2" name="DiscordRichPresenceLargeImageType"/>
             <option type="bool" default_value="false" name="DRPAllowTimeElapsed"/>
+            <option type="bool" default_value="true" name="DiscordUsername"/>
+            <option type="text" default_value="" name="DiscordUsernameCustom"/>
             <option type="text" default_value="" name="DiscordRichPresenceCustom"/>
-            <!--<option type="number" default_value="1" name="DiscordRichPresenceLargeImageType"/>-->
-
+            
+            <!--
             <option type="bool" default_value="true" name="ActivateAssaultBanner"/>
             <option type="bool" default_value="true" name="ActivateTeammatePanels"/>
+            -->
         </options>
     </Options>
 

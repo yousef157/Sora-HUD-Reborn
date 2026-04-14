@@ -27,7 +27,6 @@ if NepgearsyHUDReborn:GetOption("EnableSteamAvatarsInChat") then
 			end
 
 			y = y + HUDChat.line_height * line:number_of_lines()
-			line:set_w(self._output_width - line:left())
 		end
 	end)
 
@@ -37,6 +36,20 @@ if NepgearsyHUDReborn:GetOption("EnableSteamAvatarsInChat") then
 		self._input_panel:child("input_text"):set_font(Idstring("fonts/font_large_mf"))
 		self._input_panel:child("input_text"):set_font_size(20)
 	end)
+
+	local id_color = function(color)
+		if tostring(color) == "Color(1 * (1, 0.831373, 0))" then
+			return -- System Message
+		end
+
+		local id = table.get_key(tweak_data.chat_colors, color)
+		if not id then
+			NepgearsyHUDReborn:Error("HUDChat:id_color - id returned nil for color: " .. tostring(color))
+			return
+		end
+
+		return id
+	end
 
 	function HUDChat:receive_message(name, message, color, icon)
 		local output_panel = self._panel:child("output_panel")
@@ -54,34 +67,6 @@ if NepgearsyHUDReborn:GetOption("EnableSteamAvatarsInChat") then
 			y = 1
 		})
 
-		local get_peer_id = function()
-			if tostring(color) == "Color(1 * (1, 0.831373, 0))" then
-				return -- System Message
-			end
-
-			local id = table.get_key(tweak_data.chat_colors, color)
-			if not id then
-				NepgearsyHUDReborn:Error("HUDChat:receive_message - No id found for this color. ID-Color = ",
-					tostring(id), tostring(color))
-				return
-			end
-
-			return id
-		end
-
-		local peer_id = get_peer_id()
-		if peer_id then
-			if managers.chat._player_steam_id[peer_id] then
-				NepgearsyHUDReborn:SteamAvatar(managers.chat._player_steam_id[peer_id], function(texture)
-					if texture then
-						avatar:set_image(texture)
-					end
-				end)
-			end
-		else
-			avatar:set_image("NepgearsyHUDReborn/HUD/SystemMessageIcon")
-		end
-
 		if icon then
 			local icon_texture, icon_texture_rect = tweak_data.hud_icons:get_icon_data(icon)
 			icon_bitmap = scroll_panel:bitmap({
@@ -92,7 +77,21 @@ if NepgearsyHUDReborn:GetOption("EnableSteamAvatarsInChat") then
 			})
 			icon_bitmap:set_left(avatar:right())
 		end
-		x = avatar:right() + 5
+		x = avatar:right() + (icon and 15 or 3)
+
+		local peer_id = id_color(color)
+		if peer_id then
+			if managers.chat._player_steam_id[peer_id] then
+				NepgearsyHUDReborn:SteamAvatar(managers.chat._player_steam_id[peer_id], function(texture)
+					if texture then
+						avatar:set_image(texture)
+					end
+				end)
+			end
+		else
+			x = avatar:right() + 3
+			avatar:set_image("NepgearsyHUDReborn/HUD/SystemMessageIcon")
+		end
 
 		local line = scroll_panel:text({
 			halign = "left",
@@ -106,7 +105,7 @@ if NepgearsyHUDReborn:GetOption("EnableSteamAvatarsInChat") then
 			layer = 1,
 			text = name .. ": " .. message,
 			font = "fonts/font_large_mf",
-			font_size = 22,
+			font_size = 20,
 			x = x,
 			color = color
 		})

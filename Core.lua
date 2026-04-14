@@ -4,7 +4,7 @@ function NepgearsyHUDReborn:Init()
 	self.Dev = false
 	self.Version = "2.7.0 - Epic Update"
 	self.ModVersion = self.update_module_data.module.version or self.Version
-	self.WaifuSend = false
+	--self.WaifuSend = false
 
 	self:Log("Initialized.")
 end
@@ -90,6 +90,11 @@ NepgearsyHUDReborn.TeammatePanelStyles = {
 NepgearsyHUDReborn.DiscordRichPresenceTypes = {
 	"NepgearsyHUDReborn/Discord/DefaultType",
 	"NepgearsyHUDReborn/Discord/KillTracker"
+}
+
+NepgearsyHUDReborn.DiscordRichPresenceLargeImageTypes = {
+	"NepgearsyHUDReborn/Discord/LargeImageCharacter",
+	"NepgearsyHUDReborn/Discord/LargeImageHeist"
 }
 
 NepgearsyHUDReborn.TeammateSkinsCollectionLegacy = {
@@ -315,16 +320,12 @@ function NepgearsyHUDReborn:IsTeammatePanelWide()
 end
 
 function NepgearsyHUDReborn:TeammateRadialIDToPath(id, type)
-	local tritp = {}
-	local colors = { "", "Green", "Red", "Orange", "Yellow", "Cyan", "BlueOcean", "Blue", "Purple", "Pink", "Fushia", "RedFushia" }
-	for i = 1, 12 do
-		tritp[i] = {
-			Health = "NepgearsyHUDReborn/HUD/Health" .. colors[i],
-			Armor  = "NepgearsyHUDReborn/HUD/Shield" .. colors[i]
-		}
+	local radial_color = { "", "Green", "Red", "Orange", "Yellow", "Cyan", "BlueOcean", "Blue", "Purple", "Pink", "Fushia", "RedFushia" }
+	if type == "Health" then
+		return "NepgearsyHUDReborn/HUD/Health" .. radial_color[id]
+	elseif type == "Armor" then
+		return "NepgearsyHUDReborn/HUD/Shield" .. radial_color[id]
 	end
-
-	return tritp[id][type]
 end
 
 function NepgearsyHUDReborn:StringToColor(id)
@@ -361,7 +362,12 @@ function NepgearsyHUDReborn:SteamAvatar(steam_id, set, params)
 
 		if (refresh or not texture) and retrieving_tries < max_tries then
 			DelayedCalls:Add("NepAvatar_" .. steam_id .. "_" .. retrieving_tries, 1.5, function()
-				self:DebugLog("SteamAvatar: Refetching " .. retrieving_tries + 1 .. "/" .. max_tries .. " " .. steam_id)
+				if refresh then
+					self:DebugLog("SteamAvatar: fetching " .. steam_id)
+				else
+					self:DebugLog("SteamAvatar: refetching " .. retrieving_tries + 1 .. "/" .. max_tries .. " " .. steam_id)
+				end
+
 				self:SteamAvatar(steam_id, set, {
 					retrieving_tries = retrieving_tries + 1,
 					max_tries = max_tries,
@@ -402,7 +408,7 @@ function NepgearsyHUDReborn:SetOption(option_name, option_value)
 end
 
 -- Init NepHook functions based on Luffy's one. Hug to you if you read this :satanialove:
-NepHook = NepHook or {}
+_G.NepHook = _G.NepHook or {}
 function NepHook:Add(based_hook, content)
 	local concat_id = based_hook .. "_NepgearsyHUDReborn"
 	Hooks:Add(based_hook, concat_id, content)
@@ -418,37 +424,75 @@ function NepHook:Pre(based_class, based_func, content)
 	Hooks:PreHook(based_class, based_func, concat_id, content)
 end
 
-NepHook:Add("MenuManagerPopulateCustomMenus", function()
-	MenuCallbackHandler.NepgearsyHUDRebornMenu = ClassClbk(NepHudMenu, "SetEnabled", true)
-	MenuHelperPlus:AddButton({
-		id = "NepgearsyHUDRebornMenu",
-		title = "NepgearsyHUDRebornMenu",
-		node_name = "blt_options",
-		callback = "NepgearsyHUDRebornMenu"
+NepHook:Add("MenuManagerBuildCustomMenus", function(menu_manager, nodes)
+	MenuCallbackHandler.NepgearsyHUDRebornMenu = callback(NepHudMenu, NepHudMenu, "SetEnabled", true)
+	local node = nodes["blt_options"]
+	local item = node:create_item({ type = "CoreMenuItem.Item" }, {
+		name = "NepgearsyHUDRebornMenu",
+		text_id = "NepgearsyHUDRebornMenu",
+		callback = "NepgearsyHUDRebornMenu",
+		localize = true,
 	})
+	node:add_item(item)
 end)
 
 NepHook:Add("LocalizationManagerPostInit", function(loc_manager)
 	local chosen = NepgearsyHUDReborn:GetOption("ForcedLocalization")
-	local folder = NepgearsyHUDReborn.ModPath .. "Localization/"
 	local loc = NepgearsyHUDReborn.localization[chosen]
+	local fallback = NepgearsyHUDReborn.localization[1]
 
 	if not loc then
 		NepgearsyHUDReborn:Error("Can't load a localization file if there's no ID for it! Returning english.")
-		loc = NepgearsyHUDReborn.localization[1]
+		loc = fallback
 	end
 
-	loc_manager:load_localization_file(folder .. loc.path)
+	local folder = NepgearsyHUDReborn.ModPath .. "Localization/"
+	if SystemFS:exists(folder .. fallback.path) then
+		loc_manager:load_localization_file(folder .. fallback.path)
+	else
+		NepgearsyHUDReborn:Error("No english loc found??")
+		return
+	end
+
+	if loc ~= fallback then
+		if SystemFS:exists(folder .. loc.path) then
+			loc_manager:load_localization_file(folder .. loc.path)
+		else
+			NepgearsyHUDReborn:Error("ID available for chosen localization, but file is missing! Returning english.")
+		end
+	end
+end)
+
+NepHook:Add("NetworkReceivedData", function(sender, id, data)
+    if id == "nephud_teammate_bg" then
+        managers.player._player_teammate_bgs[sender] = data
+    end
+
+    if NepgearsyHUDReborn:GetOption("EnableStarring") then
+        local briefing = managers.hud and managers.hud._hud_mission_briefing
+        local starring_panel = briefing and briefing:_star()
+        if starring_panel then
+            local player_slot = starring_panel:child("player_" .. sender)
+            if id == "StarringColor" then
+                player_slot:set_color(NepgearsyHUDReborn:StringToColor(tonumber(data)))
+            end
+
+            if id == "StarringText" then
+                if briefing then
+                    briefing._custom_starring[sender] = ", " .. tostring(data)
+
+                    local peer = managers.network and managers.network:session() and managers.network:session():peer(sender)
+                    if peer then
+                        briefing:_update_name(peer:name(), sender)
+                    end
+                end
+            end
+        end
+    end
 end)
 
 function NepgearsyHUDReborn:IsLanguageFontLimited(lang)
-	for i, loc in ipairs(self.localization) do
-		if lang == i and loc.requires_default_font then
-			return true
-		end
-	end
-
-	return false
+    return self.localization[lang] and self.localization[lang].requires_default_font or false
 end
 
 function NepgearsyHUDReborn:SetFont(font)
@@ -459,48 +503,17 @@ function NepgearsyHUDReborn:SetFont(font)
 	return font
 end
 
-NepHook:Add("SetupInitManagers", function()
-	if not NepgearsyHUDReborn:GetOption("UseDiscordRichPresence") then
-		NepgearsyHUDReborn:DebugLog("User disabled Custom Rich Presence, skip")
-		return
-	end
-
-	NepgearsyHUDReborn:DebugLog("Setting up Custom Discord Rich Presence")
-
-	local player_level = managers.experience:current_level()
-	local player_rank = managers.experience:current_rank()
-	local is_infamous = player_rank > 0
-	local level_string = player_level > 0 and ", " .. (is_infamous and managers.experience:rank_string(player_rank) .. "-" or "") .. tostring(player_level) or ""
-
-	Discord:set_large_image("payday2_icon", "PAYDAY 2")
-	Discord:set_small_image("sora_hud", "Sora's HUD Reborn " .. NepgearsyHUDReborn.Version)
-
-	if NepgearsyHUDReborn:GetOption("DRPAllowTimeElapsed") then
-		Discord:set_start_time_relative(0)
-	else
-		Discord:set_start_time(0)
-	end
-end)
-
-function NepgearsyHUDReborn:SetDiscordPresence(title, desc, allow_time_relative, reset, reset_image)
-	if not self:GetOption("UseDiscordRichPresence") then
-		return
-	end
-
+function NepgearsyHUDReborn:SetDiscordPresence(title, desc)
 	local custom = self:GetOption("DiscordRichPresenceCustom")
 	if custom ~= "" then
-		Discord:set_status(tostring(custom), tostring(title)) --todo: This currently breaks entire rpc
+		Discord:set_status(custom, title)
 	else
-		Discord:set_status(tostring(desc), tostring(title))
+		Discord:set_status(desc, title)
 	end
 
-	if reset and allow_time_relative and self:GetOption("DRPAllowTimeElapsed") then
+	if self:GetOption("DRPAllowTimeElapsed") then
 		Discord:set_start_time_relative(0)
 	else
 		Discord:set_start_time(0)
-	end
-
-	if reset_image then
-		--Discord:set_large_image("payday2_icon", "PAYDAY 2")
 	end
 end

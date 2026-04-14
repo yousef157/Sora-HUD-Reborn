@@ -126,14 +126,14 @@ if NepgearsyHUDReborn:GetOption("EnableInteraction") then
         end
     end)
 
-    NepHook:Post(HUDInteraction, "hide_interaction_bar", function(self)
+    function HUDInteraction:hide_interaction_bar()
         self._interact_bar_contour:animate(callback(self, self, "_animate_fade_out"))
         self._interact_bar_progress:animate(callback(self, self, "_animate_fade_out"))
         self._interact_bar_background:animate(callback(self, self, "_animate_fade_out"))
         self._hud_panel:child(self._child_name_text):animate(callback(self, self, "_animate_fade_out"))
 
         self:reset_interaction_bar()
-    end)
+    end
 
     function HUDInteraction:reset_interaction_bar()
         self._hud_panel:remove(self._hud_panel:child("interact_bar_contour"))
@@ -194,11 +194,6 @@ if NepgearsyHUDReborn:GetOption("EnableInteraction") then
             self._interact_bar_progress = nil
             self._interact_bar_background = nil
         end
-    end
-
-    function HUDInteraction:_animate_interaction_complete(bitmap, circle)
-        bitmap:parent():remove(bitmap)
-        circle:remove()
     end
 
     function HUDInteraction:_animate_fade_out(o)

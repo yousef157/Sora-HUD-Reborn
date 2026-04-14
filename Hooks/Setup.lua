@@ -1,4 +1,5 @@
-NepHook:Pre(Setup, "init_managers", function()
+local init_managers_orig = Setup.init_managers
+function Setup:init_managers(managers, ...)
     local peer_colors = {
         NepgearsyHUDReborn:GetOption("SoraPeerOneColor"),
         NepgearsyHUDReborn:GetOption("SoraPeerTwoColor"),
@@ -13,6 +14,11 @@ NepHook:Pre(Setup, "init_managers", function()
     end
 
     if NepgearsyHUDReborn:GetOption("UseDiscordRichPresence") then
+        NepgearsyHUDReborn:DebugLog("Setting up Custom Discord Rich Presence")
         Discord:init("597345010656215041")
+    else
+        NepgearsyHUDReborn:DebugLog("User disabled Custom Rich Presence, skip")
     end
-end)
+
+    init_managers_orig(self, managers, ...)
+end

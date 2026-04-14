@@ -169,29 +169,31 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 				self:set_level()
 			end
 
-			self._hps_meter_panel = self._panel:panel({
-				name = "hps_meter_panel",
-				x = 0,
-				y = 0,
-				vertical = "center",
-				align = "left",
-				visible = true
-			})
-			self._hps_meter_panel:set_top(self._panel:top() + 8)
+			if NepgearsyHUDReborn:GetOption("EnableHPSMeter") then
+				self._hps_meter_panel = self._panel:panel({
+					name = "hps_meter_panel",
+					x = 0,
+					y = 0,
+					vertical = "center",
+					align = "left",
+					visible = true
+				})
+				self._hps_meter_panel:set_top(self._panel:top() + 8)
 
-			self._hps_meter = self._hps_meter_panel:text({
-				name = "hps_meter",
-				text = "|",
-				color = Color.white,
-				x = 4,
-				y = 1,
-				visible = false,
-				align = "left",
-				vertical = "top",
-				font = player_font,
-				font_size = tweak_data.hud_players.name_size,
-				layer = 4
-			})
+				self._hps_meter = self._hps_meter_panel:text({
+					name = "hps_meter",
+					text = "|",
+					color = Color.white,
+					x = 4,
+					y = 1,
+					visible = false,
+					align = "left",
+					vertical = "top",
+					font = player_font,
+					font_size = tweak_data.hud_players.name_size,
+					layer = 4
+				})
+			end
 		end
 
 		local weapons_panel = self._weapons_panel
@@ -663,11 +665,6 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 			local firemode_single = weapons_panel:child("firemode_single")
 			local firemode_auto = weapons_panel:child("firemode_auto")
 			local firemode_burst = weapons_panel:child("firemode_burst")
-			local firemode_mapping = is_secondary and self._firemode_secondary_mapping or self._firemode_primary_mapping
-
-			if firemode_mapping then
-				firemode = firemode_mapping[firemode] or firemode
-			end
 
 			local is_alt = select(1, ...)
 
@@ -679,9 +676,9 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 				end
 			end
 
-			firemode_single:set_visible(firemode == "single")
-			firemode_auto:set_visible(firemode == "auto")
-			if alive(firemode_burst) then
+			if alive(firemode_single) and alive(firemode_auto) and alive(firemode_burst) then
+				firemode_single:set_visible(firemode == "single")
+				firemode_auto:set_visible(firemode == "auto")
 				firemode_burst:set_visible(firemode == "burst")
 			end
 		end
@@ -691,6 +688,7 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 		local primary_weapon_panel = self._player_panel:child("weapons_panel"):child("primary_weapon_panel")
 		local old_single = primary_weapon_panel:child("firemode_single")
 		local old_auto = primary_weapon_panel:child("firemode_auto")
+		local old_burst = primary_weapon_panel:child("firemode_burst")
 
 		if alive(old_single) then
 			primary_weapon_panel:remove(old_single)
@@ -700,25 +698,17 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 			primary_weapon_panel:remove(old_auto)
 		end
 
+		if alive(old_burst) then
+			primary_weapon_panel:remove(old_burst)
+		end
+
 		if self._main_player then
 			local equipped = managers.blackmarket:equipped_primary()
 			local weapon_tweak_data = tweak_data.weapon[equipped.weapon_id]
 			local fire_mode = weapon_tweak_data.FIRE_MODE
 			local can_toggle_firemode = weapon_tweak_data.CAN_TOGGLE_FIREMODE
-			local toggable_fire_modes = weapon_tweak_data.fire_mode_data and weapon_tweak_data.fire_mode_data.toggable
-			local firemode_single_key = "single"
-			local firemode_auto_key = "auto"
 
-			if toggable_fire_modes then
-				can_toggle_firemode = #toggable_fire_modes > 1
-				local firemode_single_key = toggable_fire_modes[1] or firemode_single_key
-				local firemode_auto_key = toggable_fire_modes[2] or firemode_auto_key
-				self._firemode_primary_mapping = {
-					[firemode_single_key] = "single",
-					[firemode_auto_key] = "auto"
-				}
-			end
-
+			--[[
 			local locked_to_auto = managers.weapon_factory:has_perk("fire_mode_auto", equipped.factory_id, equipped.blueprint)
 			local locked_to_burst = managers.weapon_factory:has_perk("fire_mode_burst", equipped.factory_id, equipped.blueprint)
 			local locked_to_single = managers.weapon_factory:has_perk("fire_mode_single", equipped.factory_id, equipped.blueprint)
@@ -731,7 +721,6 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 				fire_mode = "single"
 			end
 
-			--[[
 			local is_locked = locked_to_auto or locked_to_burst or locked_to_single
 			local color = Color.white
 			if not can_toggle_firemode then
@@ -741,58 +730,32 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 			end
 			]]
 
-			local firemode_primary = primary_weapon_panel:text({
-				name = "firemode_single",
-				text = "SINGLE",
-				font = "fonts/font_small_shadow_mf",
-				font_size = 8,
-				layer = 2,
-				color = can_toggle_firemode and Color.white or Color(1, 0.4, 0.4),
-				visible = false,
-				x = -10,
-				align = "right"
-			})
+			local firemode = function(name, text)
+				return primary_weapon_panel:text({
+					name = name,
+					text = text,
+					font = "fonts/font_small_shadow_mf",
+					font_size = 8,
+					layer = 2,
+					color = can_toggle_firemode and Color.white or Color(1, 0.4, 0.4),
+					visible = false,
+					x = -10,
+					align = "right"
+				})
+			end
 
+			local firemode_primary = firemode("firemode_single", "SINGLE")
 			--firemode_primary:set_center_x()
 			--firemode_primary:set_top(primary_weapon_panel:h() - 2)
 			firemode_primary:set_bottom(primary_weapon_panel:h())
-			firemode_primary:hide()
 
-			local firemode_secondary = primary_weapon_panel:text({
-				name = "firemode_auto",
-				text = "AUTO",
-				font = "fonts/font_small_shadow_mf",
-				font_size = 8,
-				layer = 2,
-				color = can_toggle_firemode and Color.white or Color(1, 0.4, 0.4),
-				visible = false,
-				x = -10,
-				align = "right"
-			})
-
+			local firemode_secondary = firemode("firemode_auto", "AUTO")
 			--firemode_secondary:set_top(primary_weapon_panel:h() - 2)
 			firemode_secondary:set_bottom(primary_weapon_panel:h())
-			firemode_secondary:hide()
 
-			local firemode_burst = primary_weapon_panel:text({
-				name = "firemode_burst",
-				text = "BURST",
-				font = "fonts/font_small_shadow_mf",
-				font_size = 8,
-				layer = 2,
-				color = can_toggle_firemode and Color.white or Color(1, 0.4, 0.4),
-				visible = false,
-				x = -10,
-				align = "right"
-			})
-
+			local firemode_burst = firemode("firemode_burst", "BURST")
 			--firemode_burst:set_top(primary_weapon_panel:h() - 2)
 			firemode_burst:set_bottom(primary_weapon_panel:h())
-			firemode_burst:hide()
-
-			if self._firemode_primary_mapping then
-				fire_mode = self._firemode_primary_mapping[fire_mode] or fire_mode
-			end
 
 			if fire_mode == "single" then
 				firemode_primary:show()
@@ -805,16 +768,21 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 	end
 
 	function HUDTeammate:_create_secondary_weapon_firemode()
-		local source_weapon_panel = self._player_panel:child("weapons_panel"):child("secondary_weapon_panel")
-		local old_single = source_weapon_panel:child("firemode_single")
-		local old_auto = source_weapon_panel:child("firemode_auto")
+		local secondary_weapon_panel = self._player_panel:child("weapons_panel"):child("secondary_weapon_panel")
+		local old_single = secondary_weapon_panel:child("firemode_single")
+		local old_auto = secondary_weapon_panel:child("firemode_auto")
+		local old_burst = secondary_weapon_panel:child("firemode_burst")
 
 		if alive(old_single) then
-			source_weapon_panel:remove(old_single)
+			secondary_weapon_panel:remove(old_single)
 		end
 
 		if alive(old_auto) then
-			source_weapon_panel:remove(old_auto)
+			secondary_weapon_panel:remove(old_auto)
+		end
+
+		if alive(old_burst) then
+			secondary_weapon_panel:remove(old_burst)
 		end
 
 		if self._main_player then
@@ -822,20 +790,8 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 			local weapon_tweak_data = tweak_data.weapon[equipped.weapon_id]
 			local fire_mode = weapon_tweak_data.FIRE_MODE
 			local can_toggle_firemode = weapon_tweak_data.CAN_TOGGLE_FIREMODE
-			local toggable_fire_modes = weapon_tweak_data.fire_mode_data and weapon_tweak_data.fire_mode_data.toggable
-			local firemode_single_key = "single"
-			local firemode_auto_key = "auto"
 
-			if toggable_fire_modes then
-				can_toggle_firemode = #toggable_fire_modes > 1
-				local firemode_single_key = toggable_fire_modes[1] or firemode_single_key
-				local firemode_auto_key = toggable_fire_modes[2] or firemode_auto_key
-				self._firemode_secondary_mapping = {
-					[firemode_single_key] = "single",
-					[firemode_auto_key] = "auto"
-				}
-			end
-
+			--[[
 			local locked_to_auto = managers.weapon_factory:has_perk("fire_mode_auto", equipped.factory_id, equipped.blueprint)
 			local locked_to_burst = managers.weapon_factory:has_perk("fire_mode_burst", equipped.factory_id, equipped.blueprint)
 			local locked_to_single = managers.weapon_factory:has_perk("fire_mode_single", equipped.factory_id, equipped.blueprint)
@@ -848,7 +804,6 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 				fire_mode = "single"
 			end
 
-			--[[
 			local is_locked = locked_to_auto or locked_to_burst or locked_to_single
 			local color = Color.white
 			if not can_toggle_firemode then
@@ -858,58 +813,32 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 			end
 			]]
 
-			local firemode_primary = source_weapon_panel:text({
-				name = "firemode_single",
-				text = "SINGLE",
-				font = "fonts/font_small_shadow_mf",
-				font_size = 8,
-				layer = 2,
-				color = can_toggle_firemode and Color.white or Color(1, 0.4, 0.4),
-				visible = false,
-				x = -10,
-				align = "right"
-			})
-
-			--firemode_primary:set_center_x()
-			--firemode_primary:set_top(source_weapon_panel:h() - 2)
-			firemode_primary:set_bottom(source_weapon_panel:h())
-			firemode_primary:hide()
-
-			local firemode_secondary = source_weapon_panel:text({
-				name = "firemode_auto",
-				text = "AUTO",
-				font = "fonts/font_small_shadow_mf",
-				font_size = 8,
-				layer = 2,
-				color = can_toggle_firemode and Color.white or Color(1, 0.4, 0.4),
-				visible = false,
-				x = -10,
-				align = "right"
-			})
-
-			--firemode_secondary:set_top(source_weapon_panel:h() - 2)
-			firemode_secondary:set_bottom(source_weapon_panel:h())
-			firemode_secondary:hide()
-
-			local firemode_burst = source_weapon_panel:text({
-				name = "firemode_burst",
-				text = "BURST",
-				font = "fonts/font_small_shadow_mf",
-				font_size = 8,
-				layer = 2,
-				color = can_toggle_firemode and Color.white or Color(1, 0.4, 0.4),
-				visible = false,
-				x = -10,
-				align = "right"
-			})
-
-			--firemode_burst:set_top(source_weapon_panel:h() - 2)
-			firemode_burst:set_bottom(source_weapon_panel:h())
-			firemode_burst:hide()
-
-			if self._firemode_secondary_mapping then
-				fire_mode = self._firemode_secondary_mapping[fire_mode] or fire_mode
+			local firemode = function(name, text)
+				return secondary_weapon_panel:text({
+					name = name,
+					text = text,
+					font = "fonts/font_small_shadow_mf",
+					font_size = 8,
+					layer = 2,
+					color = can_toggle_firemode and Color.white or Color(1, 0.4, 0.4),
+					visible = false,
+					x = -10,
+					align = "right"
+				})
 			end
+
+			local firemode_primary = firemode("firemode_single", "SINGLE")
+			--firemode_primary:set_center_x()
+			--firemode_primary:set_top(secondary_weapon_panel:h() - 2)
+			firemode_primary:set_bottom(secondary_weapon_panel:h())
+
+			local firemode_secondary = firemode("firemode_auto", "AUTO")
+			--firemode_secondary:set_top(secondary_weapon_panel:h() - 2)
+			firemode_secondary:set_bottom(secondary_weapon_panel:h())
+
+			local firemode_burst = firemode("firemode_burst", "BURST")
+			--firemode_burst:set_top(secondary_weapon_panel:h() - 2)
+			firemode_burst:set_bottom(secondary_weapon_panel:h())
 
 			if fire_mode == "single" then
 				firemode_primary:show()
@@ -935,13 +864,13 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 		local player_level = teammate_panel:child("level")
 
 		teammate_panel:child("player"):set_alpha(is_player and 1 or 0)
+		teammate_panel:set_h(120)
+		teammate_panel:set_bottom(self.teammates:h())
 
 		if is_player then
 			teammate_panel:child("revive_panel2"):set_visible(NepgearsyHUDReborn:GetOption("EnableDownCounter"))
-			teammate_panel:set_h(120)
 			teammate_panel:child("subpanel_bg"):set_h(90)
 			teammate_panel:child("subpanel_bg"):set_y(30)
-			teammate_panel:set_bottom(self.teammates:h())
 
 			name:set_left(self.Avatar:left())
 			name:set_top(teammate_panel:top() + 9)
@@ -980,19 +909,19 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 			if PlayerBase.USE_GRENADES then
 				grenades_panel:set_top(cable_ties_panel:bottom() + 1)
 			end
+
 			self.BGAvatar:set_bottom(self._radial_health_panel:bottom() - 2)
 			self.Avatar:set_bottom(self.BGAvatar:bottom() - 2)
 			self.Avatar:set_left(self.BGAvatar:left() + 2)
+
 			if NepgearsyHUDReborn:GetOption("EnablePlayerLevel") then
 				self:set_level()
 			end
 		else
 			self._is_ai = true
 			teammate_panel:child("revive_panel2"):set_visible(false)
-			teammate_panel:set_h(120)
 			teammate_panel:child("subpanel_bg"):set_h(35)
 			teammate_panel:child("subpanel_bg"):set_y(115)
-			teammate_panel:set_bottom(self.teammates:h())
 
 			--player_name_bg:set_visible(false)
 			player_name_bg:set_bottom(teammate_panel:h() - 6)
@@ -1014,11 +943,14 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 		local name = teammate_panel:child("name")
 		local level = teammate_panel:child("level")
 		local callsign = teammate_panel:child("callsign")
+
 		local peer_color = tweak_data.chat_colors[id] or tweak_data.chat_colors[#tweak_data.chat_colors]
+
 		name:set_color(peer_color)
 		level:set_color(peer_color)
 		callsign:set_color(peer_color)
-		if self._hps_meter then
+
+		if NepgearsyHUDReborn:GetOption("EnableHPSMeter") and self._hps_meter then
 			self._hps_meter:set_color(peer_color)
 		end
 
@@ -1040,7 +972,7 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 		panel:set_visible(true)
 
 		if not user_id or user_id == 0 or user_id == "" then
-			NepgearsyHUDReborn:Error("no uid for panel number " .. self._id)
+			NepgearsyHUDReborn:Error("HUDTeammate:set_level - no uid for panel number " .. self._id)
 			return
 		end
 
@@ -1061,11 +993,7 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 				infamy = managers.experience:rank_string(managers.experience:current_rank()) .. "-"
 			end
 
-			local local_data = {
-				level = managers.experience:current_level(),
-				rank = infamy
-			}
-			panel:set_text(local_data.rank .. local_data.level)
+			panel:set_text(infamy .. managers.experience:current_level())
 			--managers.hud:make_fine_text(panel)
 		end
 	end
@@ -1157,7 +1085,6 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 			local peer = managers.network:session():peer(self._peer_id)
 			local steam_id = self._main_player and Steam:userid() or (peer and peer:account_id())
 			local quality = self._main_player and Steam.LARGE_AVATAR or 1
-			refresh = refresh or false
 			self.Avatar:set_visible(true)
 			NepgearsyHUDReborn:SteamAvatar(steam_id, function(texture)
 				if texture then
@@ -1235,11 +1162,13 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 		})
 	end
 
-	function HUDTeammate:update_hps_meter(current_hps, total_hps)
-		if self._hps_meter then
-			if NepgearsyHUDReborn:GetOption("EnableHPSMeter")
-				and ((NepgearsyHUDReborn:GetOption("ShowHPSCurrent") and current_hps and current_hps > 0)
-					or (NepgearsyHUDReborn:GetOption("ShowHPSTotal") and total_hps and total_hps > 0)) then
+	if NepgearsyHUDReborn:GetOption("EnableHPSMeter") then
+		function HUDTeammate:update_hps_meter(current_hps, total_hps)
+			if not self._hps_meter then
+				return
+			end
+
+			if (NepgearsyHUDReborn:GetOption("ShowHPSCurrent") and current_hps and current_hps > 0) or (NepgearsyHUDReborn:GetOption("ShowHPSTotal") and total_hps and total_hps > 0) then
 				local hps_string = nil
 				if NepgearsyHUDReborn:GetOption("ShowHPSCurrent") then
 					hps_string = (current_hps and current_hps > 0 and string.format("%.2f", current_hps) or "-")
@@ -1255,27 +1184,33 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 				self._panel:child("name"):set_visible(true)
 			end
 		end
-	end
 
-	function HUDTeammate:change_health(change_of_health)
-		if managers.player then
+		function HUDTeammate:change_health(change_of_health)
+			if not managers.player then
+				return
+			end
+
 			change_of_health = change_of_health or 0
 			local time_current = managers.player:player_timer():time()
 			local passed_time = time_current - (self._last_time or time_current)
 			self._total_hps_time = (self._total_hps_time or 0) + passed_time
 			self._total_hps_heal = (self._total_hps_heal or 0) + change_of_health
 			self._total_hps = self._total_hps_heal / self._total_hps_time
+
 			if time_current > (self._last_heal_happened or 0) + (NepgearsyHUDReborn:GetOption("CurrentHPSTimeout") or 5) then
 				self._current_hps_heal = nil
 				self._current_hps_time = nil
 			end
+
 			self._current_hps_time = (self._current_hps_time or 0) + passed_time
 			self._current_hps_heal = (self._current_hps_heal or 0) + change_of_health
 			self._current_hps = self._current_hps_heal / self._current_hps_time
+
 			self._last_time = time_current
 			if change_of_health > 0 then
 				self._last_heal_happened = time_current
 			end
+
 			if time_current > (self._last_hps_shown or 0) + (NepgearsyHUDReborn:GetOption("HPSRefreshRate") or 1) then
 				self._last_hps_shown = time_current
 				self:update_hps_meter(self._current_hps, self._total_hps)
@@ -1315,19 +1250,27 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 		end
 	end)
 
-	NepHook:Post(HUDTeammate, "set_revives_amount", function(self, revive_amount)
-		local revive_colors = {
-			Color(255, 255, 44, 44) / 255,
-			Color(255, 255, 144, 144) / 255,
-			Color(255, 255, 235, 235) / 255,
-			Color(255, 255, 255, 255) / 255
-		}
+	local revive_colors = {
+		Color(255, 255, 44, 44) / 255,
+		Color(255, 255, 144, 144) / 255,
+		Color(255, 255, 235, 235) / 255,
+		Color(255, 255, 255, 255) / 255
+	}
 
+	function HUDTeammate:set_revives_amount(revive_amount)
 		if revive_amount then
-			self._panel:child("revive_panel2"):child("revive_amt"):set_text(tostring(math.max(revive_amount - 1, 0)))
-			self._panel:child("revive_panel2"):child("revive_icon"):set_color(revive_colors[revive_amount] or revive_colors[4])
+			local revive_panel = self._panel:child("revive_panel2")
+			local revive_amount_text = revive_panel:child("revive_amt")
+			local revive_icon = revive_panel:child("revive_icon")
+
+			if revive_amount_text then
+				revive_amount_text:set_text(tostring(math.max(revive_amount - 1, 0)))
+			end
+			if revive_icon then
+				revive_icon:set_color(revive_colors[revive_amount] or revive_colors[4])
+			end
 		end
-	end)
+	end
 
 	function HUDTeammate:_update_player_bg(texture)
 		if self._main_player then
@@ -1340,7 +1283,7 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 	end
 
 	function HUDTeammate:set_copr_indicator(enabled, static_damage_ratio)
-		local teammate_panel = self._panel:child("player")
+		--local teammate_panel = self._panel:child("player")
 		local radial_health_panel = self._radial_health_panel
 		local copr_overlay_panel = radial_health_panel:child("copr_overlay_panel")
 		local radial_health = radial_health_panel:child("radial_health")
@@ -1400,7 +1343,7 @@ if not NepgearsyHUDReborn:IsTeammatePanelWide() then
 			end
 		end
 	end
-	--[[
+--[[
 else
 	NepHook:Post(HUDTeammate, "init", function(self, i, teammates_panel, is_player, width)
 		self:_apply_nepgearsy_hud_reborn(i, teammates_panel, is_player, width)

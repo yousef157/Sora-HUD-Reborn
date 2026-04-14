@@ -146,7 +146,13 @@
 	"NepgearsyHUDRebornMenu/Buttons/Menu/DiscordRichPresenceType" : "Presence Type",
 	"NepgearsyHUDReborn/Discord/DefaultType" : "Default (Shows current heist)",
 	"NepgearsyHUDReborn/Discord/KillTracker" : "Kill tracker (Cops killed in heist)",
+	"NepgearsyHUDRebornMenu/Buttons/Menu/DiscordRichPresenceLargeImageType" : "Large image type",
+	"NepgearsyHUDRebornMenu/Buttons/Menu/DiscordRichPresenceLargeImageTypeHelp" : "Character: Always show character image if available.\nHeist: Show heist image if available. If not, fallback to character image.",
+	"NepgearsyHUDReborn/Discord/LargeImageCharacter" : "Character",
+	"NepgearsyHUDReborn/Discord/LargeImageHeist" : "Heist",
 	"NepgearsyHUDRebornMenu/Buttons/Menu/DRPAllowTimeElapsed" : "Show the time elapsed",
+	"NepgearsyHUDRebornMenu/Buttons/Menu/DiscordUsername" : "Show username",
+	"NepgearsyHUDRebornMenu/Buttons/Menu/DiscordUsernameCustom" : "Custom username",
 	"NepgearsyHUDRebornMenu/Help/DiscordCustomPresenceLimitation" : "Be aware: Using a custom status won't display the Presence type.",
 	"NepgearsyHUDRebornMenu/Buttons/Menu/DiscordRichPresenceCustom" : "Custom Discord Status",
 
