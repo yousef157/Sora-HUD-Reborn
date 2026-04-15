@@ -1333,7 +1333,7 @@ function NepHudMenu:InitBack()
         text_align = "center",
         text_vertical = "center",
         font_size = 20,
-        on_callback = callback(self, self._menu, "SetEnabled", false)
+        on_callback = callback(self._menu, self._menu, "SetEnabled", false)
     })
 end
 
